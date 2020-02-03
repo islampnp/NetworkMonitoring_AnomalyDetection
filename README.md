@@ -3,9 +3,9 @@
 this is a final year project realised by the following students in the >
 
     Superior School Of Computer Science SidiBelAbbes Esi_Sba
-# Contributors
-Benchiekh Mostafa chekri
-Benhabra Abdesselam
+# Contributors >
+1.Benchiekh Mostafa chekri
+2.Benhabra Abdesselam
 
 # The goal
 
