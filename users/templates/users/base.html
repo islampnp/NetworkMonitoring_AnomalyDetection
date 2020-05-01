@@ -14,12 +14,27 @@
 
 <link rel="stylesheet" href="./../../static/auth.css"> 
 
-
+ {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Network Monitoring AND anomly detection syetem</title>
+    {% endif %}
 </head>
 <body >
-{% block content %}
 
-{% endblock %}
+
+
+           
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+          {% block content %}
+          {% endblock %}
+    
 
 
 <!-- JQuery -->
