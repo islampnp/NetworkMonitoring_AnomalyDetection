@@ -18,10 +18,8 @@ def register(request):
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
 
-def ss(request):
-    return render(request, 'users/authentification/login.html')
 
-
+@login_required
 def monitoring(request):
     return render(request,'pagedccueille.html',{'title':'Network Monitoring and anomalys detection system'})
 
