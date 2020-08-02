@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'users.apps.UsersConfig',
+    'anomalydetection.apps.AnomalydetectionConfig',
     'crispy_forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -127,6 +128,6 @@ MEDIA_URL = '/media/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-LOGIN_REDIRECT_URL = 'monitoring'
+LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 
