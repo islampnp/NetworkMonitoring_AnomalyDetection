@@ -15,8 +15,8 @@
 <script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
 </head>
   <body>
-    
-        
+
+
 <div class="wrapper">
     <div class="sidebar">
         <div id="textanomaly">  Anomaly Detection</div>
@@ -24,7 +24,7 @@
             <li style="background-color: #3a306b;color: #DFDF29;"><a href="">Monitoring</a></li>
             <li><a href="{% url 'detection' %}">Anomaly Detction</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
-        
+
         </ul> 
         
         
@@ -52,10 +52,30 @@
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Start CICFlowMetre</button>
             </a>
-            
-            <button type="button" class="btn mt-3" style="
+            <div> 
+              
+              <form action="{% url 'simple_upload' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="file" name="csvfile">
+                <button type="submit" class="btn mt-3" style="
                                                              background-color: #9EA231;
-                                                             color: aliceblue;">Laod CSV File</button>
+                                                             color: aliceblue;">Uplaod CSV File</button>
+              </form>
+              {% if messages %}
+                {% for message in messages %}
+                <div>
+                    <strong>{{message|safe}}</strong>
+                </div>
+            {% endfor %}
+            {% endif %}
+            {% if uploaded_file_url %}
+                <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+              {% endif %}
+            
+              
+            
+            
+            </div>
                                                              
         </div> 
         </div>

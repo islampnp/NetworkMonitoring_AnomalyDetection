@@ -27,10 +27,18 @@ urlpatterns = [
     path('home/', anomalymonitoring_views.home, name='home'),
     path('monitoring/', anomalymonitoring_views.monitoring, name='monitoring'),
     path('detection/', anomalymonitoring_views.detection, name='detection'),
-     
+    path('simple_upload/', anomalymonitoring_views.simple_upload, name='simple_upload'),
+   
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     path('', auth_views.LoginView.as_view(template_name='users/authentification/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/authentification/logout.html'), name='logout'),
-    path('startcicflowmter/',anomalymonitoring_views.startcicflowmter,name='startcicflowmter')
+    path('startcicflowmter/',anomalymonitoring_views.startcicflowmter,name='startcicflowmter'),
+    
 ]
+
+
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
