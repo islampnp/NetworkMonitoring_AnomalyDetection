@@ -1,28 +1,10 @@
-<html>
-  <head>
-    <title>Monitoring</title>
-    <!-- Font Awesome -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-<!-- Google Fonts -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-<!-- Bootstrap core CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-<!-- Material Design Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/css/mdb.min.css" rel="stylesheet"> 
-
-<link rel="stylesheet" type="text/css" href="../static/home.css">
-<script src="https://use.fontawesome.com/56fdabe767.js"></script>
-<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-</head>
-  <body>
-
-
-<div class="wrapper">
-    <div class="sidebar">
-        <div id="textanomaly">  Anomaly Detection</div>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %} 
+        
         <ul>
             <li style="background-color: #3a306b;color: #DFDF29;"><a href="">Monitoring</a></li>
-            <li><a href="{% url 'detection' %}">Anomaly Detction</a></li>
+            <li><a href="{% url 'detection' %}">Anomalies Detction</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
 
         </ul> 
@@ -57,27 +39,34 @@
               <form action="{% url 'simple_upload' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mt-3 ml-2">
-                  <strong>Chose a csv file &nbsp;&nbsp;&nbsp;</strong>
-                <input type="file" name="csvfile">
+                  <p class="mb-1">Chose a CSV file pleas !!</p>
+                  <input type="file" name="csvfile">
+                
                 </div>
                 <div>                <button type="submit" class="btn mt-3" style="
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Uplaod CSV File</button>
                 </div>
+                <div class="form-check ml-3" >
+                  
+                  <input type="checkbox" value="delete" class="form-check-input" id="delete" name="delete">
+                  <label class="form-check-label" for="delete">Delete if exist</label>
+                </div>
 
               
               </form>
+              <div class="ml-3">
               {% if messages %}
                 {% for message in messages %}
-                <div>
+                
                     <strong>{{message|safe}}</strong>
-                </div>
+                
             {% endfor %}
             {% endif %}
             {% if uploaded_file_url %}
                 <p>File uploaded at: <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
               {% endif %}
-            
+            </div>
               
             
             
@@ -86,18 +75,4 @@
         </div> 
         </div>
         
-    </div>
-    
-</div>
-
-<!-- JQuery -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- Bootstrap tooltips -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-<!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<!-- MDB core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
-
-  </body>
-</html>
+    {%endblock content%}

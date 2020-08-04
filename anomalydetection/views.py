@@ -40,23 +40,23 @@ def simple_upload(request):
     if request.method == 'POST' and request.FILES['csvfile']:
         myfile = request.FILES['csvfile']
 
-        
-
-        
-        
-        if os.path.exists("media\\"+myfile.name) :
-              messages.error(request, 'The file is already ubloaded')
+        if os.path.exists("media\\"+myfile.name)  :          
+            if len(request.POST.getlist('delete')) == 1:
+                os.remove("media\\"+myfile.name)
+            else : messages.error(request, 'File already up ')
         else:
-            #  check if the file is a csv file
-            if not myfile.name.endswith('.csv'):
+            pass
+
+        if not myfile.name.endswith('.csv'):
                 messages.error(request, 'THIS IS NOT A CSV FILE')
-            else:    
+        else:    
                 fs = FileSystemStorage()
                 filename = fs.save(myfile.name, myfile)
                 uploaded_file_url = fs.url(filename)
                 return render(request, 'monitoringpage.html', {
                     'uploaded_file_url': uploaded_file_url
-                })
+                })    
+   
         
            
 

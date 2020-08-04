@@ -1,28 +1,11 @@
-<html>
-  <head>
-    <title>Anomaly Detection</title>
-    <!-- Font Awesome -->
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-<!-- Google Fonts -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap">
-<!-- Bootstrap core CSS -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
-<!-- Material Design Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/css/mdb.min.css" rel="stylesheet"> 
 
-<link rel="stylesheet" type="text/css" href="../static/home.css">
-<script src="https://use.fontawesome.com/56fdabe767.js"></script>
-<script src="https://kit.fontawesome.com/b99e675b6e.js"></script>
-</head>
-  <body>
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% block content %}     
     
-        
-<div class="wrapper">
-    <div class="sidebar">
-        <div id="textanomaly">  Anomaly Detection</div>
         <ul>
             <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
-            <li style="background-color: #3a306b;color: #DFDF29;"><a href="#">Anomaly Detction</a></li>
+            <li style="background-color: #3a306b;color: #DFDF29;"><a href="#">Anomalies Detction</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
         
         </ul> 
@@ -60,19 +43,4 @@
         </div> 
         </div>
         
-    </div>
-    
-    
-</div>
-
-<!-- JQuery -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-<!-- Bootstrap tooltips -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
-<!-- Bootstrap core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.4.1/js/bootstrap.min.js"></script>
-<!-- MDB core JavaScript -->
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
-
-  </body>
-</html>
+ {%endblock content%}
