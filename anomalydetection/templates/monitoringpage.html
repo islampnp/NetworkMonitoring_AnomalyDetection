@@ -52,14 +52,20 @@
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Start CICFlowMetre</button>
             </a>
-            <div> 
+             
               
               <form action="{% url 'simple_upload' %}" method="POST" enctype="multipart/form-data">
                 {% csrf_token %}
+                <div class="mt-3 ml-2">
+                  <strong>Chose a csv file &nbsp;&nbsp;&nbsp;</strong>
                 <input type="file" name="csvfile">
-                <button type="submit" class="btn mt-3" style="
+                </div>
+                <div>                <button type="submit" class="btn mt-3" style="
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Uplaod CSV File</button>
+                </div>
+
+              
               </form>
               {% if messages %}
                 {% for message in messages %}
