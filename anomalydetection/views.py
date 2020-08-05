@@ -5,7 +5,9 @@ from users import templates
 from django.core.files.storage import FileSystemStorage
 import subprocess
 import os
-
+from django.contrib import messages
+from pathlib import Path
+import pandas as pd
 
 
 @login_required
@@ -33,13 +35,11 @@ def startcicflowmter(request):
 
     return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
 
-from django.core.files.storage import FileSystemStorage
-from django.contrib import messages
-from pathlib import Path
+
 def simple_upload(request):
     if request.method == 'POST' and request.FILES['csvfile']:
         myfile = request.FILES['csvfile']
-
+        
         if os.path.exists("media\\"+myfile.name)  :          
             if len(request.POST.getlist('delete')) == 1:
                 os.remove("media\\"+myfile.name)
@@ -52,7 +52,9 @@ def simple_upload(request):
         else:    
                 fs = FileSystemStorage()
                 filename = fs.save(myfile.name, myfile)
+                #df = pd.read_csv(myfile)
                 uploaded_file_url = fs.url(filename)
+               
                 return render(request, 'monitoringpage.html', {
                     'uploaded_file_url': uploaded_file_url
                 })    
@@ -60,4 +62,5 @@ def simple_upload(request):
         
            
 
+    
     return render(request, 'monitoringpage.html')
