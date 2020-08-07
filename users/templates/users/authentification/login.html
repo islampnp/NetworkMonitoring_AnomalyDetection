@@ -2,37 +2,50 @@
 {% extends "users/base.html" %}
 {% load crispy_forms_tags %}
 {% block content %}
-    <div class="container  "style = "color:#D4DBF5;">
-       
-         
-          
-
-
-        <div class="card w-50 mt-5 " style = "margin: 0 auto;float: none;margin-bottom: 
-                    10px;margin-top:30px;">
-
+<div class="limiter" >
+    <div class="container" >
+        <div class="wrap-login100">
+            <div class="login100-pic js-tilt" data-tilt>
+                <img src="./../static/img-01.png" alt="IMG">
+            </div>
         
-
-        <!--Card content-->
-        <div class="card-body px-lg-5 pt-0 mt-5">
-
-            <!-- Form --> 
-        
-        <form class="text-center" style="color: #00030D;" action="#!" method="post">
+            <form class="login100-form  " method="POST">
+                <span class="mb-5"style=" font-family: Poppins-Bold;
+                font-size: 24px;
+                color: #333333;
+                
+                text-align: center;" >
+                    Sign IN
+                </span>
             {% csrf_token %}
-                <h5 class="card-header text-center py-2 mb-5" style =" color:#020B26">
-                     <strong>Sign in</strong>
-                 </h5>
-           {{ form|crispy }}
-              
+            <div class="mt-4">  
+            {{ form|crispy }}
+            </div>     
+            
+            <div class="container-login100-form-btn">
+                <button class="btn"     style="
+                background-color: #9EA231;
+                color: aliceblue;
+                ">
+                    Login
+                </button>
+            </div>
+            <!-- Sign in button -->
+            
+            
+            <div class="text-center p-t-12">
+                <span class="txt1">
+                    Forgot Username / Password?
+                </span>
+               
             </div>
 
-            <!-- Sign in button -->
-            <button class="btn btn-dark btn-rounded btn-block my-2 waves-effect z-depth-0" type="submit" > 
-              Sign in             
-            </button>
-            <a class="ml-2" href="{% url 'monitoring' %}">..</a>
-            
+            <div class="text-center p-t-136">
+                <a class="txt2" href="#">
+                    Contact the adminstration
+                    <i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+                </a>
+            </div>
          </form>
 
           

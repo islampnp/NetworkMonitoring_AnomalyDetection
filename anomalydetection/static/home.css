@@ -106,9 +106,3 @@ body{
   margin-bottom: 20px;
 }
 
-@media (max-height: 500px){
-  .social_media{
-    display: none !important;
-  }
-}
-
