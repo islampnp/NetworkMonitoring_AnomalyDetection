@@ -8,9 +8,12 @@ import os
 from django.contrib import messages
 from pathlib import Path
 import pandas as pd
-import glob
 from django.template import Context
 
+import numpy as np
+from glob import glob
+from joblib import dump, load #FOR saving 
+from tensorflow.keras.models import load_model
 
 @login_required
 def home(request):
@@ -22,7 +25,7 @@ def monitoring(request):
 
 @login_required
 def detection(request):
-    context = glob.glob("media/*.csv")
+    context = glob("media/*.csv")
     if len(context)==0 :
         test = True
         return render (request,'detectionpage.html',{"test": test})
@@ -72,7 +75,7 @@ def simple_upload(request):
 
 def satrtanomleisdetection(request):
     
-    context = glob.glob("media/*.csv")
+    context = glob("media/*.csv")
     if len(context)==0 :
         test = True
         return render (request,'detectionpage.html',{"test": test})
@@ -83,9 +86,61 @@ def satrtanomleisdetection(request):
             a = request.POST.getlist('checkfile')
             CIC = pd.read_csv(a[0])
             for i in a[1:] :
-                
                 CIC=pd.concat([CIC,pd.read_csv(i)]) 
-            print(CIC.shape)
-            print(a[0])
+           
+            flows=CIC
+            #Preprocessing
+            #Storing THE SOCKET INFO COLUMNS into a variable:
+            socket_info=flows[flows.columns[0:7]] 
+            flows=flows[flows.columns[7:]]
+
+            #Dropping the Label column
+            flows=flows[flows.columns[:-1]]
+
+            #REPLACING inf and -inf values with NAN:
+            flows = flows.replace([np.inf, -np.inf], np.nan)
+
+            #REMOVING NAN INSTANCES :
+            flows = flows.dropna(axis=0,how='any') 
+
+            #Converting the values into floats
+            for i in flows.columns:
+                flows[i]=flows[i].astype(float)
+
+            #SCALING THE FEATURES
+            #Same thing concerning the path 
+            scaler =load('anomalydetection/static/model/Scaler.joblib')
+            flows = scaler.transform(flows)
+
+            #Use of PCA
+            #Remeber the path 
+           # pca =load('anomalydetection/static/model/PCA.joblib')
+            #flows_pca = pca.transform(flows)
+
+            #The reverse Hot Encoding (from binary arrays to string )
+            encoder=load('anomalydetection/static/model/OHE.joblib')
+            #END of Preprocessing 
+
+            #Anomaly detection (Two possibilities available for now, untill we choose the final one )
+
+            #In case of using ANN without pca
+            ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
+            result = ANN.predict(flows)
+
+            result = encoder.inverse_transform(result) #reverse of one hot encoding
+            result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Necessary conversion from ndarray to a DataFrame
+            classification_result  = pd.concat((socket_info,result_DF), axis=1) #Concatinating the socket infos with the ANN output column
+            classification_result.to_csv('trial1.csv') #Exporting the result to a csv file
+
+            #In case of using PCA-ANN:
+            #ANN_PCA = load_model("/content/gdrive/My Drive/Kaggle/MachineLearningCSV/MachineLearningCVE/FINAL_PCA-ANN.h5") #the path :)
+            #result_PCA = ANN_PCA.predict(flows_pca)
+
+            #result_PCA = encoder.inverse_transform(result_PCA)
+            #result_DF_PCA= pd.DataFrame(result_PCA, index=None, columns=['Classification'])
+            #classification_result_PCA  = pd.concat((socket_info,result_DF_PCA), axis=1)
+            #classification_result_PCA.to_csv('trial1.csv') #Exporting the result to a csv file
+            #END of Anomaly Detection
+            print(classification_result)
         
         return render(request ,'detectionpage.html',{"context" :context})
