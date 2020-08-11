@@ -42,16 +42,19 @@
                   <p class="mb-1">Chose a CSV file pleas !!</p>
                   <input type="file" name="csvfile">
                 
+               
                 </div>
-                <div>                <button type="submit" class="btn mt-3" style="
-                                                             background-color: #9EA231;
-                                                             color: aliceblue;">Uplaod CSV File</button>
-                </div>
+
                 <div class="form-check ml-3" >
                   
                   <input type="checkbox" value="delete" class="form-check-input" id="delete" name="delete">
                   <label class="form-check-label" for="delete">Delete if exist</label>
                 </div>
+                <div>                <button type="submit" class="btn mt-3" id="btnuplaod" style="
+                                                             background-color: #9EA231;
+                                                             color: aliceblue;">Uplaod CSV File</button>
+                </div>
+                
 
               
               </form>
@@ -70,6 +73,7 @@
               <div>
                 <button type="button" name="load_data" id="load_data" class="btn"
                 style="
+                
                 background-color: #9EA231;
                 color: rgb(224, 233, 241);"
                 >show data</button>
@@ -95,7 +99,11 @@
         
 
 <script>
+  
+
+
   $(document).ready(function(){
+    
  $('#load_data').click(function(){
   $.ajax({
    url:"{{uploaded_file_url}}",

@@ -8,6 +8,8 @@ import os
 from django.contrib import messages
 from pathlib import Path
 import pandas as pd
+import glob
+from django.template import Context
 
 
 @login_required
@@ -20,7 +22,13 @@ def monitoring(request):
 
 @login_required
 def detection(request):
-    return render(request,'detectionpage.html',{'title':'anomalys detection system'})
+    context = glob.glob("media/*.csv")
+    if len(context)==0 :
+        test = True
+        return render (request,'detectionpage.html',{"test": test})
+        
+    else :
+        return render(request,'detectionpage.html',{"context" :context})
 
 
 @login_required
@@ -57,10 +65,27 @@ def simple_upload(request):
                
                 return render(request, 'monitoringpage.html', {
                     'uploaded_file_url': uploaded_file_url
-                })    
-   
-        
-           
+                })   
 
-    
     return render(request, 'monitoringpage.html')
+
+
+def satrtanomleisdetection(request):
+    
+    context = glob.glob("media/*.csv")
+    if len(context)==0 :
+        test = True
+        return render (request,'detectionpage.html',{"test": test})
+        
+    else :
+        if request.method == "POST":
+            
+            a = request.POST.getlist('checkfile')
+            CIC = pd.read_csv(a[0])
+            for i in a[1:] :
+                
+                CIC=pd.concat([CIC,pd.read_csv(i)]) 
+            print(CIC.shape)
+            print(a[0])
+        
+        return render(request ,'detectionpage.html',{"context" :context})

@@ -5,7 +5,7 @@
     
         <ul>
             <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
-            <li style="background-color: #3a306b;color: #DFDF29;"><a href="#">Anomalies Detction</a></li>
+            <li style="background-color: #3a306b;color: #DFDF29;"><a href="{% url 'detection' %}">Anomalies Detction</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
         
         </ul> 
@@ -30,17 +30,43 @@
         </div>
 
         <div class="container  ">
-        <div class="btn-group-vertical mt-5 ">
-            <a href=""><button type="button" class="btn  " style="
+          <P class="mt-5 ml-3">what do you test </P>
+         <div  style="width:400px; height: 100px; overflow-y: scroll;">
+          <form action="{% url 'satrtanomleisdetection' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+          {% if test == True %}
+          <h5 class="container" style="text-align: center; 
+                                        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                                        color: #3a306b;"> there is no CSV file uplaoded</h5>
+          {% else %}
+            {% for i in context %}
+          <div class="custom-control custom-checkbox custom-control ml-2">
+            <input type="checkbox" class="custom-control-input" name="checkfile" value="{{i}}" id="{{i}}">
+            <label class="custom-control-label" for="{{i}}" >{{i}}</label>
+          </div>
+
+          
+              {% endfor %}
+          {%  endif %}
+      <div>
+       
+      </div>
+    </div>    
+
+        <div class="btn-group-vertical  ">
+            <a href="{% url 'satrtanomleisdetection'%}"><button type="submit" class="btn  " style="
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Start Detction of Anomalies</button>
             </a>
+
             
-            <button type="button" class="btn mt-3" style="
-                                                             background-color: #9EA231;
-                                                             color: aliceblue;">stope</button>
-                                                             
+
+
+
+        
         </div> 
+       
+      </form>
         </div>
         
  {%endblock content%}
