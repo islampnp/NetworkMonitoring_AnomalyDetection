@@ -39,14 +39,16 @@
                                         font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
                                         color: #3a306b;"> there is no CSV file uplaoded</h5>
           {% else %}
-            {% for i in context %}
-          <div class="custom-control custom-checkbox custom-control ml-2">
+          
+            {% for i in context.filechecked %}
+        
+            <div class="custom-control custom-checkbox custom-control ml-2">
             <input type="checkbox" class="custom-control-input" name="checkfile" value="{{i}}" id="{{i}}">
             <label class="custom-control-label" for="{{i}}" >{{i}}</label>
           </div>
-
-          
+            
               {% endfor %}
+          
           {%  endif %}
       <div>
        
@@ -54,7 +56,8 @@
     </div>    
 
         <div class="btn-group-vertical  ">
-            <a href="{% url 'satrtanomleisdetection'%}"><button type="submit" class="btn  " style="
+            <a href="{% url 'satrtanomleisdetection'%}">
+              <button type="submit" class="btn " style="
                                                              background-color: #9EA231;
                                                              color: aliceblue;">Start Detction of Anomalies</button>
             </a>
@@ -65,8 +68,54 @@
 
         
         </div> 
-       
-      </form>
-        </div>
+      <div>
+        {% if messages %}
+          {% for message in messages %}
         
+            <strong>{{message|safe}}</strong>
+        
+          {% endfor %}
+        {%endif%}
+
+      </div>
+        
+        <div class="table-responsive mt-5">
+                <table class="table">
+                  <thead class="black white-text">
+                    <tr>
+                      <th>#</th>
+                      <th>Flow_ID</th>
+                      <th>Src_IP</th>
+                      <th>Src_Port</th>
+                      <th>Dst_IP</th>
+                      <th>Dst_Port</th>
+                      <th>Protocol</th>
+                      <th>Timestamp</th>
+                      <th>Classification</th>
+                      
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {%for i in context.query%}
+                    
+                    <tr>
+                      {%for j in i%}
+                        
+                         <td>{{j}}</td>
+                         
+                      {%endfor%}
+                    </tr>
+                    
+                      {%endfor%}
+                  </tbody>
+                </table>
+        <div id="employee_table">
+        </div>
+        </div>
+      </form>
+      
+
+      
+ 
+ 
  {%endblock content%}

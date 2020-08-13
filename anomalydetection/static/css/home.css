@@ -10,14 +10,14 @@
 }
 
 body{
-   background-color: #f3f5f9;
+   background-color: #fdfdfd;
 }
 
 #textanomaly{
   font-size: 1.3rem;
   margin-left: 1.5rem;
-  margin-bottom: 2rem;
-  color: #DFDF29;
+  margin-bottom: 3rem;
+  color: #f3f5f9;
 } 
 .wrapper{
   display: flex;
@@ -27,7 +27,7 @@ body{
 .wrapper .sidebar{
   width: 200px;
   height: 100%;
-  background: #0A1747;
+  background: #3a306b;
   padding: 30px 0px;
   position: fixed;
 }
