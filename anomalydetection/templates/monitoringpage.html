@@ -3,7 +3,7 @@
 {% block content %} 
         
         <ul>
-            <li style="background-color: #3a306b;color: #DFDF29;"><a href="">Monitoring</a></li>
+            <li ><a href="">Monitoring</a></li>
             <li><a href="{% url 'detection' %}">Anomalies Detction</a></li>
             <li><a href="{% url 'logout' %}">Logout</a></li>
 
@@ -30,10 +30,13 @@
 
         <div class="container  ">
         <div class="btn-group-vertical mt-5 ">
-            <a href="{% url 'startcicflowmter'%}"><button type="button" class="btn  " style="
-                                                             background-color: #9EA231;
-                                                             color: aliceblue;">Start CICFlowMetre</button>
+          <div class="flip">
+            <a href="{% url 'startcicflowmter'%}" target="_blank">
+              <div class="front">Start CICFlowMetre</div>
+              <div class="back">Start CICFlowMetre</div>
             </a>
+          </div>
+            
              
               
               <form action="{% url 'simple_upload' %}" method="POST" enctype="multipart/form-data">

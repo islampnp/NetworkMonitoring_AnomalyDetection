@@ -92,17 +92,14 @@ def satrtanomleisdetection(request):
                 messages.error(request, 'Chose your CSV file for the detection paret pleas ')
             else : 
                     
-                CIC = pd.read_csv(a[0])
+                flows = pd.read_csv(a[0])
                 for i in a[1:] :
-                    CIC=pd.concat([CIC,pd.read_csv(i)]) 
+                    flows=pd.concat([flows,pd.read_csv(i)]) 
             
-                flows=CIC
+               
                 #Preprocessing
                 #Storing THE SOCKET INFO COLUMNS into a variable:
-                socket_info=flows[flows.columns[0:7]] 
-                print(socket_info)
-                flows=flows[flows.columns[7:]]
-
+                                
                 #Dropping the Label column
                 flows=flows[flows.columns[:-1]]
 
@@ -112,7 +109,12 @@ def satrtanomleisdetection(request):
                 #REMOVING NAN INSTANCES :
                 flows = flows.dropna(axis=0,how='any') 
 
-                #Converting the values into floats
+                #DROPPING THE SOCKET INFO COLUMNS:
+
+                socket_info=flows[flows.columns[0:7]] 
+                flows=flows[flows.columns[7:]]
+                
+
                 for i in flows.columns:
                     flows[i]=flows[i].astype(float)
                 
@@ -123,7 +125,7 @@ def satrtanomleisdetection(request):
 
                 #Use of PCA
                 #Remeber the path 
-            # pca =load('anomalydetection/static/model/PCA.joblib')
+                #pca =load('anomalydetection/static/model/PCA.joblib')
                 #flows_pca = pca.transform(flows)
 
                 #The reverse Hot Encoding (from binary arrays to string )
@@ -136,16 +138,27 @@ def satrtanomleisdetection(request):
                 ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
                 result = ANN.predict(flows)
 
-                result = encoder.inverse_transform(result) #reverse of one hot encoding
-                result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Necessary conversion from ndarray to a DataFrame
-                classification_results  = pd.concat((socket_info,result_DF), axis=1) #Concatinating the socket infos with the ANN output column
-                classification_results.to_csv('media/../trial1.csv') #Exporting the result to a csv file
-              
+                                
+                result = encoder.inverse_transform(result)
+               
+                result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a conversion to a DataFrame
+               
+                #classification_result  = pd.concat([socket_info.reset_index(drop=True),result_DF.reset_index(drop=Tru‌​e)] , axis=1)
+                classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left')
+               
+
+             
+                #print(classification_result.shape)
+
+                classification_result.to_csv('trial1.csv') #Export the result to a csv file
+                delete = Revo.objects.all()
+                delete.delete()
                 csvtomodle("trial1.csv")
+                
                 
                 cursor = connection.cursor()
                 try:
-                    cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' LIMIT 0,130")
+                    cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
                 finally:
                    
                     context['query'] = cursor.fetchall()
@@ -167,7 +180,7 @@ def satrtanomleisdetection(request):
     
 
 def csvtomodle(filecsv) :
-   
+    
     with open(filecsv) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -176,15 +189,17 @@ def csvtomodle(filecsv) :
                
                 iid = row['']
                 Flow_ID = row['Flow ID']
+                Src_IP = row['Src IP']
                 Src_Port = row['Src Port']
                 Dst_IP = row['Dst IP']
                 Dst_Port = row['Dst Port']
                 Protocol = row['Protocol']
                 Timestamp =row['Timestamp']
                 Classification =row['Classification']
-                new_revo = Revo(Id = iid , Flow_ID=Flow_ID, 
+                new_revo = Revo(Id = iid , Flow_ID=Flow_ID, Src_IP=Src_IP,
                 Src_Port=Src_Port,Dst_IP=Dst_IP,Dst_Port=Dst_Port ,Protocol =Protocol ,Timestamp =Timestamp ,Classification=Classification)
                 new_revo.save()
 
 
-             
+
+
