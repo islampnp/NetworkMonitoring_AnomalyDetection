@@ -46,6 +46,7 @@
       <a  href="{% url 'detectionsrealtime'%}" id="load_data_real_time" >
     
         <button class="btn2" ><span>START</span></button>
+        <p id="p"></p>
       </a>
 
     </div>
@@ -66,35 +67,31 @@
  
     </div>
     
-<ul id="ul">
-  <li id="li"></li>
-</ul>
 
 </div>
 
 <script>
 $(document).ready(function(){
-    
-$('#load_data_real_time').click(function(){
+
+  
+setInterval(function(){
+
   
 
 $.ajax({
     type: "GET",
-    url: '{% url "detectionsrealtime"%}',
-    data : {'a':'{{contextQ}}'}
-    success: function(data){
-      for (i=0;i < data.length;i++)
-        $('ul').append('<li>'+data[i]+'</li>');     
-        
+    url: '{% url "detectionsrealtimefun"%}',
+    
+    success: function(josn){
+      console.log(josn["contextQ"])
+      $("#p").html(josn["contextQ"])
         
         },
     
-    error: function(jqXHR, textStatus, errorThrown){
-      alert("eeeeeeeeeeeeeee");
-
-    }
+    
 });
-    });
+    
+  }, 1500);
     });
     
  </script>

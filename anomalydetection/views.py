@@ -201,9 +201,9 @@ def csvtomodle(filecsv) :
 
 
 def detectionsrealtime(request):
-    
+    delete = Revo.objects.all()
+    delete.delete()
     while True:
-        
         detectionsrealtimefun(request)
         time.sleep(30)
     
@@ -237,9 +237,9 @@ def detectionsrealtimefun(request):
             cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
         finally:
             context['query'] = cursor.fetchall()
-        print ("tick")
+        print (len(context['query']))
         
-        return JsonResponse({'contextQ':context['query']}) 
+        return JsonResponse({'contextQ':len(context['query'])}) 
 
                     
   
