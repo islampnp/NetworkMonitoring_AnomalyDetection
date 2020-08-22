@@ -1,4 +1,4 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse,Http404
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from users import templates  
@@ -9,15 +9,15 @@ from django.contrib import messages
 from pathlib import Path
 import pandas as pd
 from django.template import Context
-
 import numpy as np
 from glob import glob
 from joblib import dump, load #FOR saving 
 from tensorflow.keras.models import load_model
-
 import csv
 from .models import Revo
 from django.db import connection 
+
+
 
 @login_required
 def home(request):
@@ -35,9 +35,11 @@ def detection(request):
         return render (request,'detectionpage.html',{"test": test})
         
     else :
-        print(context['filechecked'])
+      
         return render(request,'detectionpage.html',{"context" :context})
-
+@login_required
+def realtime(request):
+    return render(request,"realtimepage.html",{"title":"Real Time Detection"} )
 
 @login_required
 def startcicflowmter(request):
@@ -77,9 +79,10 @@ def simple_upload(request):
 
     return render(request, 'monitoringpage.html')
 
+import time
 
 def satrtanomleisdetection(request):
-    
+
     context['filechecked'] = glob("media/*.csv")
     if len(context['filechecked'])==0 :
         test = True
@@ -89,7 +92,7 @@ def satrtanomleisdetection(request):
         if request.method == "POST":
             a = request.POST.getlist('checkfile')
             if len(a) == 0 :
-                messages.error(request, 'Chose your CSV file for the detection paret pleas ')
+                messages.error(request, 'Chose your CSV file for the detection part please ')
             else : 
                     
                 flows = pd.read_csv(a[0])
@@ -136,44 +139,39 @@ def satrtanomleisdetection(request):
 
                 #In case of using ANN without pca
                 ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
-                result = ANN.predict(flows)
-
-                                
+                result = ANN.predict(flows)                
                 result = encoder.inverse_transform(result)
-               
-                result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a conversion to a DataFrame
-               
-                #classification_result  = pd.concat([socket_info.reset_index(drop=True),result_DF.reset_index(drop=Tru‌​e)] , axis=1)
-                classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left')
-               
+                result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a onversion 
+                classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left')           
+                
+                classification_result.to_csv('trial1.csv')
 
-             
-                #print(classification_result.shape)
-
-                classification_result.to_csv('trial1.csv') #Export the result to a csv file
+                
+                #In case of using PCA-ANN:
+                #ANN_PCA = load_model("anomalydetection/static/model/FINAL_PCA-ANN.h5")
+                #result_PCA = ANN_PCA.predict(flows_pca)
+#
+                #result_PCA = encoder.inverse_transform(result_PCA)
+                #result_DF_PCA= pd.DataFrame(result_PCA, index=None, columns=['Classification'])
+                #classification_rsult_PCA = socket_info.reset_index().merge(result_DF_PCA.reset_index(), #left_index=True,right_index=True, how='left')
+                #lassification_result_PCA.to_csv('trial2.csv') #Export the result to a csv file
+#
                 delete = Revo.objects.all()
                 delete.delete()
                 csvtomodle("trial1.csv")
                 
-                
+            
                 cursor = connection.cursor()
                 try:
                     cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
+                    
                 finally:
                    
                     context['query'] = cursor.fetchall()
-                   
+                    
                     
     return render(request ,'detectionpage.html',{"context" :context})
-                #In case of using PCA-ANN:
-                #ANN_PCA = load_model("/content/gdrive/My Drive/Kaggle/MachineLearningCSV/MachineLearningCVE/FINAL_PCA-ANN.h5") #the path :)
-                #result_PCA = ANN_PCA.predict(flows_pca)
-
-                #result_PCA = encoder.inverse_transform(result_PCA)
-                #result_DF_PCA= pd.DataFrame(result_PCA, index=None, columns=['Classification'])
-                #classification_result_PCA  = pd.concat((socket_info,result_DF_PCA), axis=1)
-                #classification_result_PCA.to_csv('trial1.csv') #Exporting the result to a csv file
-                #END of Anomaly Detection
+    
                 
              
 
@@ -202,4 +200,47 @@ def csvtomodle(filecsv) :
 
 
 
+def detectionsrealtime(request):
+    
+    while True:
+        
+        detectionsrealtimefun(request)
+        time.sleep(30)
+    
+      
+def detectionsrealtimefun(request):
+    
+    
+            
+        t = pd.to_datetime('today').strftime('%Y-%m-%d')
+        context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        flows = pd.read_csv(context['filechecked'][0])
+        flows=flows[flows.columns[:-1]]
+        flows = flows.replace([np.inf, -np.inf], np.nan)
+        flows = flows.dropna(axis=0,how='any') 
+        socket_info=flows[flows.columns[0:7]] 
+        flows=flows[flows.columns[7:]]
+        for i in flows.columns:
+            flows[i]=flows[i].astype(float)
+        scaler =load('anomalydetection/static/model/Scaler.joblib')
+        flows = scaler.transform(flows)
+        encoder=load('anomalydetection/static/model/OHE.joblib')
+        ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
+        result = ANN.predict(flows)                
+        result = encoder.inverse_transform(result)
+        result_DF= pd.DataFrame(result, index=None, columns=['Classification']) 
+        classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left') 
+        classification_result.to_csv('trial1.csv')    
+        csvtomodle("trial1.csv")
+        cursor = connection.cursor()
+        try:
+            cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
+        finally:
+            context['query'] = cursor.fetchall()
+        print ("tick")
+        
+        return JsonResponse({'contextQ':context['query']}) 
 
+                    
+  
+  

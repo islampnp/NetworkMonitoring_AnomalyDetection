@@ -6,6 +6,8 @@
         <ul>
             <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
             <li><a href="{% url 'detection' %}">Anomalies Detction</a></li>
+            <li><a href="{% url 'realtime' %}">Real Time Anomalies Detction</a></li>
+
             <li><a href="{% url 'logout' %}">Logout</a></li>
         
         </ul> 
@@ -19,7 +21,8 @@
               Overview
             </div>
             <div class="col-md-auto">              
-                 <i class="far fa-bell"></i>            
+                 <i class="far fa-bell"></i>    
+                 <span>{{context.query|length}}</span>        
             </div>
             <div class="col col-lg-2">              
               <i class="fa fa-question-circle" aria-hidden="true"></i>       
@@ -29,131 +32,121 @@
           
         </div>
 
-        <div class="container  ">
-          <P class="mt-5 ml-3">what do you test </P>
-         <div  style="width:400px; height: 100px; overflow-y: scroll;">
-          <form action="{% url 'satrtanomleisdetection' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-          {% if test == True %}
-          <h5 class="container" style="text-align: center; 
-                                        font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-                                        color: #3a306b;"> there is no CSV file uplaoded</h5>
-          {% else %}
-          
-            {% for i in context.filechecked %}
+
+
+<div class="container  ">
+  <P class="mt-5 ml-3">CHOSE THE CSV FILE</P>
+  <form action="{% url 'satrtanomleisdetection' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+  <div class="row  align-items-center">
+    <div class="col">
+     
+      <div class="scrollbar" id="style-4">
+        <div class="force-overflow">
+  
         
-            <div class="custom-control custom-checkbox custom-control ml-2">
-            <input type="checkbox" class="custom-control-input" name="checkfile" value="{{i}}" id="{{i}}">
-            <label class="custom-control-label" for="{{i}}" >{{i}}</label>
+            {% if test == True %}
+            <h5 class="container" style="text-align: center; 
+                                     font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+                                     color: #3a306b;"> there is no CSV file uplaoded</h5>
+          {% else %}
+          <div class="boxes">
+            {% for i in context.filechecked %}
+           
+                          <input type="checkbox" class="box-1" name="checkfile" value="{{i}}" id="{{i}}">
+                          <label class="box-1" for="{{i}}" >{{i}}</label>
+              
+                 
+            {% endfor %}
           </div>
+             {%  endif %}
+       
+            </div>
+    </div>
+  </div>    
+<div class="col">
+ 
+  <lottie-player src=" https://assets5.lottiefiles.com/packages/lf20_FWh7bv.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay>
+          
+          
+  </lottie-player>
+</div>
+  <div class="col">
+    
+    
+     
+     
+       
+        
+          
+          <div >
+          <a  href="{% url 'satrtanomleisdetection'%}">
+          
+            <button class="btn2" ><span>START</span></button>
+            
+          </a>
+          </div>
+          <div class="mt-3">
+            <p id="demo"></p>
+            {% if messages %}
+              {% for message in messages %}
+            
+                <strong>{{message|safe}}</strong>
             
               {% endfor %}
-          
-          {%  endif %}
-      <div>
+            {%endif%}
        
-      </div>
-    </div>    
+          </div>
+          
+    
+  </div>
+     
+  
 
-        <div class="btn-group-vertical  ">
-            <a href="{% url 'satrtanomleisdetection'%}">
-              <button class="btn" type="submit"
-              
-                          
-              
-              >Start Detction of Anomalies</button>
-            </a>
-
-            <div>         
-            <button class="circle-button run-leave">
-              <span class="circle-button__text">The Story</span>
-              <span class="bg">
-                
-                <svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="50" cy="50" r="50"></circle>
-                </svg>
-              </span>
-            </button>
-            </div>
-            
-
-
-
-        
-        </div> 
-      <div>
-        {% if messages %}
-          {% for message in messages %}
-        
-            <strong>{{message|safe}}</strong>
-        
-          {% endfor %}
-        {%endif%}
-
-      </div>
-        
-        <div class="table-responsive mt-5">
-                <table class="table">
-                  <thead style="background-color: 3a306b; color:#fff;">
-                    <tr>
-                      <th>#</th>
-                      <th>Flow_ID</th>
-                      <th>Src_IP</th>
-                      <th>Src_Port</th>
-                      <th>Dst_IP</th>
-                      <th>Dst_Port</th>
-                      <th>Protocol</th>
-                      <th>Timestamp</th>
-                      <th>Classification</th>
-                      
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {%for i in context.query%}
-                    
-                    <tr>
-                      {%for j in i%}
-                        
-                         <td>{{j}}</td>
-                         
-                      {%endfor%}
-                    </tr>
-                    
-                      {%endfor%}
-                  </tbody>
-                </table>
-        <div id="employee_table">
-        </div>
-        </div>
-      </form>
-      
-
-      
  
- <script>
+  <div class="table-responsive mt-5">
+             <table class="table">
+               <thead style="background-color: 3a306b; color:#fff;">
+                 <tr>
+                   <th>#</th>
+                   <th>Flow_ID</th>
+                   <th>Src_IP</th>
+                   <th>Src_Port</th>
+                   <th>Dst_IP</th>
+                   <th>Dst_Port</th>
+                   <th>Protocol</th>
+                   <th>Timestamp</th>
+                   <th>Classification</th>
+                   
+                 </tr>
+               </thead>
+               <tbody>
+                 {%for i in context.query%}
+                 
+                 <tr>
+                   {%for j in i%}
 
+                      <td>{{j}}</td>
+                      
+                   {%endfor%}
+                 </tr>
+                 
+                   {%endfor%}
+               </tbody>
+             </table>
+     
+</div>
    
-const circle = document.querySelector('.circle-button');
-const buttonText = document.querySelector('.circle-button .circle-button__text');
+   
 
-const toggleCircleAnimation = () => {
-	circle.classList.toggle('run-enter');
-  circle.classList.toggle('run-leave');
-}
 
-const handleButtonHover = () => {
-	buttonText.innerHTML = 'Play';
-}
+    </div>
+  </form>
+  
+</div>
+          
 
-const handleButtonOut = () => {
-	buttonText.innerHTML = 'The Story';
-}
-
-circle.addEventListener('mouseover', toggleCircleAnimation);
-circle.addEventListener('mouseover', handleButtonHover);
-circle.addEventListener('mouseout', toggleCircleAnimation);
-circle.addEventListener('mouseout', handleButtonOut);
-circle.addEventListener('click', () => console.log('circle click'));
-
- </script>
+      
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+ 
  {%endblock content%}

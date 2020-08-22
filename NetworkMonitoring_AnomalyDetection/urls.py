@@ -28,6 +28,11 @@ urlpatterns = [
     path('monitoring/', anomalymonitoring_views.monitoring, name='monitoring'),
     path('detection/', anomalymonitoring_views.detection, name='detection'),
     path('simple_upload/', anomalymonitoring_views.simple_upload, name='simple_upload'),
+    path('detectionsrealtime/', anomalymonitoring_views.detectionsrealtime, name='detectionsrealtime'),
+    path('realtime/',anomalymonitoring_views.realtime,name='realtime'),
+    path('detectionsrealtimefun/',anomalymonitoring_views.detectionsrealtimefun,name='detectionsrealtimefun'),
+
+    
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),
     path('', auth_views.LoginView.as_view(template_name='users/authentification/login.html'), name='login'),
