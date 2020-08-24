@@ -19,10 +19,13 @@
             <div class="col">
               Overview
             </div>
-            <div class="col-md-auto">              
-                 <i class="far fa-bell"></i>    
-                 <span>{{contextQ}}</span>        
+
+            <div class="col-md-auto" id="detection" style="visibility: hidden;">
+              
+              <lottie-player  src=" https://assets3.lottiefiles.com/packages/lf20_S6ngTz/alert.json"  background="transparent"  speed="1" style="width: 70px; height: 50px;" loop autoplay> </lottie-player>
+               <div><span id="p" style="margin: 30px;"></span></div>
             </div>
+            <div class="col"> </div>
             <div class="col col-lg-2">              
               <i class="fa fa-question-circle" aria-hidden="true"></i>       
             </div>
@@ -34,22 +37,41 @@
 
 
 <div class="container  ">
-    
- <div style="
- width:100%;
- margin-left:30%;
- margin-right:25%" >
-     <div><a href="{% url 'startcicflowmter'%}" id ="button" style="margin: 1em 0px 1em 0px;">Start CICFlowMetre</a></div>
-    
-     <div>
+    <div class="row align-items-center" style='margin: 60px;
+    border-block-end: 2px solid #a19cbd;
+    '>
+      <div class="col"  >
+        
+          <div class="row align-items-center">
+            <a id="start">
+            <div class="col">
+              <lottie-player id="str" src=" https://assets2.lottiefiles.com/private_files/lf30_gtENKI.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop autoplay> </lottie-player>
+        
+        
+            <span style="margin: 25px;">START</span>
+            </div>
+          </a>
+            <div class="col">
+              <a id="button" style="visibility: hidden;"> PUASE</a>
+            </div>
+            
+        </div>
      
-      <a  href="{% url 'detectionsrealtime'%}" id="load_data_real_time" >
-    
-        <button class="btn2" ><span>START</span></button>
-        <p id="p"></p>
-      </a>
-
+      </div>
+      <div class="col"id="loadbtn" style="visibility: hidden;">
+        <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 200px; height: 200px;"  loop autoplay> </lottie-player>
+      </div>
+      <div class=" col">
+        <a style="visibility: hidden;" id ="btnuplazod">
+          STOP 
+        </a>
+      </div>
+      </div>
     </div>
+  
+    
+      
+      
  </div>
 
     
@@ -67,33 +89,53 @@
  
     </div>
     
-
 </div>
 
 <script>
-$(document).ready(function(){
 
-  
-setInterval(function(){
-
-  
-
+var aa = setInterval(function(){
 $.ajax({
     type: "GET",
     url: '{% url "detectionsrealtimefun"%}',
     
-    success: function(josn){
-      console.log(josn["contextQ"])
-      $("#p").html(josn["contextQ"])
+    success: function(json){
+      
+        $("#p").html(json["contextQ"].length);
+        document.getElementById("detection").style.visibility = "visible";
+     
+      
         
-        },
-    
+    /*var label = []
+    var data = []
+    json.forEach(function (element) {
+      label.push(element.tahun)
+      data.push(element.e_nilai)
+    })*/
+    },
+    });  
+    }, 15000);
+
+
+$('#start').click(function() {
+  aa;
+  document.getElementById("loadbtn").style.visibility= "visible"
+  document.getElementById("button").style.visibility= "visible"
+  document.getElementById("btnuplazod").style.visibility= "visible"
+  document.getElementById("start").style.visibility= "hidden"
+  document.getElementById("str").src = "https://assets4.lottiefiles.com/packages/lf20_FtD13Z.json"
+  alert("detection started")
     
 });
-    
-  }, 1500);
-    });
-    
+$('#btnuplazod').click(function() {
+  alert("do you stop the real time detection ? ")
+  document.getElementById("start").style.visibility= "visible"
+  document.getElementById("button").style.visibility= "hidden"
+  document.getElementById("btnuplazod").style.visibility= "hidden"
+  document.getElementById("loadbtn").style.visibility= "hidden"
+
+  clearInterval(aa);
+});
+  
  </script>
 
 {%endblock content%}

@@ -138,7 +138,7 @@ def satrtanomleisdetection(request):
                 #Anomaly detection (Two possibilities available for now, untill we choose the final one )
 
                 #In case of using ANN without pca
-                ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
+                ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
                 result = ANN.predict(flows)                
                 result = encoder.inverse_transform(result)
                 result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a onversion 
@@ -199,22 +199,30 @@ def csvtomodle(filecsv) :
                 new_revo.save()
 
 
-
+dic= {'s':0,'e':20}
 def detectionsrealtime(request):
     delete = Revo.objects.all()
     delete.delete()
-    while True:
-        detectionsrealtimefun(request)
-        time.sleep(30)
+    dic= {'s':0,'e':20}
+    return render(request,'realtimepage.html')
     
-      
+
+
+
+
 def detectionsrealtimefun(request):
-    
-    
-            
+        
+       
         t = pd.to_datetime('today').strftime('%Y-%m-%d')
         context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
         flows = pd.read_csv(context['filechecked'][0])
+        
+        print(flows.shape)
+        flows = flows.iloc[dic['s']:dic['e'],:]
+        dic['s'] = dic['e']
+        dic['e'] = dic['e'] +20
+        print(dic)
+        print(flows.shape)
         flows=flows[flows.columns[:-1]]
         flows = flows.replace([np.inf, -np.inf], np.nan)
         flows = flows.dropna(axis=0,how='any') 
@@ -225,7 +233,7 @@ def detectionsrealtimefun(request):
         scaler =load('anomalydetection/static/model/Scaler.joblib')
         flows = scaler.transform(flows)
         encoder=load('anomalydetection/static/model/OHE.joblib')
-        ANN = load_model("anomalydetection/static/model/FINAL_ANN.h5") #the path :)
+        ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
         result = ANN.predict(flows)                
         result = encoder.inverse_transform(result)
         result_DF= pd.DataFrame(result, index=None, columns=['Classification']) 
@@ -239,7 +247,7 @@ def detectionsrealtimefun(request):
             context['query'] = cursor.fetchall()
         print (len(context['query']))
         
-        return JsonResponse({'contextQ':len(context['query'])}) 
+        return JsonResponse({'contextQ':context['query']}) 
 
                     
   
