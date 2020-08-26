@@ -34,7 +34,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'anomalydetection.apps.AnomalydetectionConfig',
     'crispy_forms',
-    
+    'rest_framework',
     'django.contrib.admin',
     
     'django.contrib.auth',

@@ -37,8 +37,13 @@ def detection(request):
     else :
       
         return render(request,'detectionpage.html',{"context" :context})
+dic= {'s':0,'e':5}
 @login_required
 def realtime(request):
+    delete = Revo.objects.all()
+    delete.delete()
+    dic['s'] = 0
+    dic['e'] = 5
     return render(request,"realtimepage.html",{"title":"Real Time Detection"} )
 
 @login_required
@@ -199,11 +204,12 @@ def csvtomodle(filecsv) :
                 new_revo.save()
 
 
-dic= {'s':0,'e':20}
+
 def detectionsrealtime(request):
     delete = Revo.objects.all()
     delete.delete()
-    dic= {'s':0,'e':20}
+    dic['s'] = 0
+    dic['e'] = 5
     return render(request,'realtimepage.html')
     
 
@@ -213,42 +219,48 @@ def detectionsrealtime(request):
 def detectionsrealtimefun(request):
         
        
-        t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
         context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
         flows = pd.read_csv(context['filechecked'][0])
-        
-        print(flows.shape)
-        flows = flows.iloc[dic['s']:dic['e'],:]
-        dic['s'] = dic['e']
-        dic['e'] = dic['e'] +20
-        print(dic)
-        print(flows.shape)
-        flows=flows[flows.columns[:-1]]
-        flows = flows.replace([np.inf, -np.inf], np.nan)
-        flows = flows.dropna(axis=0,how='any') 
-        socket_info=flows[flows.columns[0:7]] 
-        flows=flows[flows.columns[7:]]
-        for i in flows.columns:
-            flows[i]=flows[i].astype(float)
-        scaler =load('anomalydetection/static/model/Scaler.joblib')
-        flows = scaler.transform(flows)
-        encoder=load('anomalydetection/static/model/OHE.joblib')
-        ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
-        result = ANN.predict(flows)                
-        result = encoder.inverse_transform(result)
-        result_DF= pd.DataFrame(result, index=None, columns=['Classification']) 
-        classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left') 
-        classification_result.to_csv('trial1.csv')    
-        csvtomodle("trial1.csv")
-        cursor = connection.cursor()
-        try:
-            cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
-        finally:
-            context['query'] = cursor.fetchall()
-        print (len(context['query']))
-        
-        return JsonResponse({'contextQ':context['query']}) 
-
-                    
-  
+        q=flows.shape[0]
+        print(dic['e'])
+        print(q)
+        if(flows.shape[0] >= dic['e']) :    
+            print(flows.shape)
+            flows = flows.iloc[dic['s']:dic['e'],:]
+            dic['s'] = dic['e']
+            dic['e'] = q
+            print(dic)
+           
+            flows=flows[flows.columns[:-1]]
+            flows = flows.replace([np.inf, -np.inf], np.nan)
+            flows = flows.dropna(axis=0,how='any') 
+            socket_info=flows[flows.columns[0:7]] 
+            flows=flows[flows.columns[7:]]
+            for i in flows.columns:
+                flows[i]=flows[i].astype(float)
+            scaler =load('anomalydetection/static/model/Scaler.joblib')
+            flows = scaler.transform(flows)
+            encoder=load('anomalydetection/static/model/OHE.joblib')
+            ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
+            result = ANN.predict(flows)                
+            result = encoder.inverse_transform(result)
+            result_DF= pd.DataFrame(result, index=None, columns=['Classification']) 
+            classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left') 
+            classification_result.to_csv('trial1.csv')    
+            csvtomodle("trial1.csv")
+            cursor = connection.cursor()
+            try:
+                cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
+            finally:
+                context['query'] = cursor.fetchall()
+            print (len(context['query']))
+            
+            return JsonResponse({'contextQ':context['query']}) 
+        else : 
+            
+            return render(request,'realtimepage.html',{'contextQ':context['query']})            
+    else:
+        return render(request,'realtimepage.html')
   
