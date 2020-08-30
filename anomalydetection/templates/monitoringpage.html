@@ -34,8 +34,11 @@
 <div class="container  ">
  
 <div class="row align-items-center mt-5">
+  <div class="col-lg-2" id ="button">
+    <a href="{% url 'startcicflowmter'%}" >Start CICFlowMetre</a>
+  </div>
   <div class="col-lg-2">
-    <a href="{% url 'startcicflowmter'%}" id ="button">Start CICFlowMetre</a>
+    <a href="{% url 'stopcicflowmter'%}" id ="button">Stop CICFlowMetre</a>
   </div>
   <div class="col col-md-auto">   
   <form  method="POST" action="{% url 'simple_upload' %}"enctype="multipart/form-data" >
@@ -93,189 +96,88 @@
       <p>File uploaded  <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
   {% endif %}
       
-</div><!--
-<div style="width:20em;margin:0 auto;">
+</div>
 
-  <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
-                <lottie-player src="https://assets3.lottiefiles.com/packages/lf20_egwdrB.json"  background="transparent"  speed="1"  style="width: 300px; height: 300px;"  loop autoplay></lottie-player>
- </div>-->
   </div> 
   
- 
-  <table  id="mytable" class="table table-hover table-fixed mt-5 " 
+
+  <table  class="table table-hover table-fixed mt-5 " 
   width="100%" >
-  <thead>              
+
+  <thead id="mytable" >              
   <tr>
-  <th >Flow ID</th>
-  <th >Src IP</th>
-  <th >Src Port</th>
-  <th >Dst IP</th>
-  <th >Dst Port</th>
-  <th >Protocol</th>
-  <th >Timestamp</th>
+  <th style="width: 50px" >Src IP</th>
+  <th style="width: 50px">Src Port</th>
+  <th style="width: 50px">Dst IP</th>
+  <th style="width: 50px">Dst Port</th>
+  <th style="width: 50px">Protocol</th>
+  <th style="width: 50px">Timestamp</th>
   </tr>
 </thead>
 
+<tbody id="items"  class="scrollbar ml-1">
+
+</tbody>
+
 </table>
-<div class="tableFix" id="employee_table"></div>
+
 
                             
-           <!--   <table  class="table table-striped table-bordered table-sm" cellspacing="0"
-              width="100%">
-              <thead>              
-              <tr>
-              <th class="th-sm" >Flow ID</th>
-              <th class="th-sm" >Src IP</th>
-              <th class="th-sm" >Src Port</th>
-              <th class="th-sm" >Dst IP</th>
-              <th class="th-sm" >Dst Port</th>
-              <th class="th-sm" >Protocol</th>
-              <th class="th-sm" >Timestamp</th>
-              <th class="th-sm" >Flow Duration</th>
-              <th class="th-sm" >Tot Fwd Pkts</th>
-              <th class="th-sm" >Tot Bwd Pkts</th>
-              <th class="th-sm" >TotLen Fwd Pkts</th>
-              <th class="th-sm" >TotLen Bwd Pkts</th>
-              <th class="th-sm" >Fwd Pkt Len Max</th>
-              <th class="th-sm" >Fwd Pkt Len Min</th>
-              <th class="th-sm" >Fwd Pkt Len Mean</th>
-              <th class="th-sm" >Fwd Pkt Len Std</th>
-              <th class="th-sm" >Bwd Pkt Len Max</th>
-              <th class="th-sm" >Bwd Pkt Len Min</th>
-              <th class="th-sm" >Bwd Pkt Len Mean</th>
-              <th class="th-sm" >Bwd Pkt Len Std</th>
-              <th class="th-sm" >Flow Byts/s</th>
-              <th class="th-sm" >Flow Pkts/s</th>
-              <th class="th-sm" >Flow IAT Mean</th>
-              <th class="th-sm" >Flow IAT Std</th>
-              <th class="th-sm" >Flow IAT Max</th>
-              <th class="th-sm" >Flow IAT Min</th>
-              <th class="th-sm" >Fwd IAT Tot</th>
-              <th class="th-sm" >Fwd IAT Mean</th>
-              <th class="th-sm" >Fwd IAT Std</th>
-              <th class="th-sm" >Fwd IAT Max</th>
-              <th class="th-sm" >Fwd IAT Min</th>
-              <th class="th-sm" >Bwd IAT Tot</th>
-              <th class="th-sm" >Bwd IAT Mean</th>
-              <th class="th-sm" >Bwd IAT Std</th>
-              <th class="th-sm" >Bwd IAT Max</th>
-              <th class="th-sm" >Bwd IAT Min</th>
-              <th class="th-sm" >Fwd PSH Flags</th>
-              <th class="th-sm" >Bwd PSH Flags</th>
-              <th class="th-sm" >Fwd URG Flags</th>
-              <th class="th-sm" >Bwd URG Flags</th>
-              <th class="th-sm" >Fwd Header Len</th>
-              <th class="th-sm" >Bwd Header Len</th>
-              <th class="th-sm" >Fwd Pkts/s</th>
-              <th class="th-sm" >Bwd Pkts/s</th>
-              <th class="th-sm" >Pkt Len Min</th>
-              <th class="th-sm" >Pkt Len Max</th>
-              <th class="th-sm" >Pkt Len Mean</th>
-              <th class="th-sm" >Pkt Len Std</th>
-              <th class="th-sm" >Pkt Len Var</th>
-              <th class="th-sm" >FIN Flag Cnt</th>
-              <th class="th-sm" >SYN Flag Cnt</th>
-              <th class="th-sm" >RST Flag Cnt</th>
-              <th class="th-sm" >PSH Flag Cnt</th>
-              <th class="th-sm" >ACK Flag Cnt</th>
-              <th class="th-sm" >URG Flag Cnt</th>
-              <th class="th-sm" >CWE Flag Count</th>
-              <th class="th-sm" >ECE Flag Cnt</th>
-              <th class="th-sm" >Down/Up Ratio</th>
-              <th class="th-sm" >Pkt Size Avg</th>
-              <th class="th-sm" >Fwd Seg Size Avg</th>
-              <th class="th-sm" >Bwd Seg Size Avg</th>
-              <th class="th-sm" >Fwd Byts/b Avg</th>
-              <th class="th-sm" >Fwd Pkts/b Avg</th>
-              <th class="th-sm" >Fwd Blk Rate Avg</th>
-              <th class="th-sm" >Bwd Byts/b Avg</th>
-              <th class="th-sm" >Bwd Pkts/b Avg</th>
-              <th class="th-sm" >Bwd Blk Rate Avg</th>
-              <th class="th-sm" >Subflow Fwd Pkts</th>
-              <th class="th-sm" >Subflow Fwd Byts</th>
-              <th class="th-sm" >Subflow Bwd Pkts</th>
-              <th class="th-sm" >Subflow Bwd Byts</th>
-              <th class="th-sm" >Init Fwd Win Byts</th>
-              <th class="th-sm" >Init Bwd Win Byts</th>
-              <th class="th-sm" >Fwd Act Data Pkts</th>
-              <th class="th-sm" >Fwd Seg Size Min</th>
-              <th class="th-sm" >Active Mean</th>
-              <th class="th-sm" >Active Std</th>
-              <th class="th-sm" >Active Max</th>
-              <th class="th-sm" >Active Min</th>
-              <th class="th-sm" >Idle Mean</th>
-              <th class="th-sm" >Idle Std</th>
-              <th class="th-sm" >Idle Max</th>
-              <th class="th-sm" >Idle Min</th>
-
-              <th class="th-sm" >Label</th>
-
-              </tr>
-                          
-              </thead>
-            </table>-->
-            
-        
-          
-  
-       
-
-      
            
         </div>          
     </div>
 
 
 <script>
+   function addHeaders(table, keys) {
+  var row = table.insertRow();
+  for( var i = 0; i < keys.length; i++ ) {
+    var cell = row.insertCell();
+    cell.appendChild(document.createTextNode(keys[i]));
+  }
+}
+$('#button').click(function(){
+var aa = setInterval(function(){
 
-
-
-
-
-
-  $(document).ready(function(){
-    
- $('#load_data').click(function(){
    var a = document.getElementById('mytable')
    a.style.color = '#eeeded'
    a.style.backgroundColor='#302673'
   $.ajax({
-   url:"{{uploaded_file_url}}",
-   dataType:"text",
-   success:function(data)
+    type: "GET",
+    url: '{% url "showdata"%}',
+  
+    success:function(data)
    {
-    var employee_data = data.split(/\r?\n|\r/);
-    var table_data = '<table class="table table-hover table-fixed" >';
-    var t = ""
-    for(var count = 1; count<employee_data.length; count++) /*employee_data.*/
-    {
-     var cell_data = employee_data[count].split(",");
-     table_data+='<tbody >'
-     for(var cell_count=0; cell_count<7; cell_count++)
-     {
-      
-      if(count === 0)
-      {
-       table_data += '<th >'+cell_data[cell_count]+'</th>';
-      }
-      else
-      {
-       table_data += '<td>'+cell_data[cell_count]+'</td>';
-      }
-      
-     }
-     table_data+='<tbody>'
-    }
     
-    table_data += '</table>';
-    $('#employee_table').html(table_data);
+    a= data["flows"]
+ 
+
+var table = document.createElement('table');
+for( var i = 0; i < a.length; i++ ) {
+
+  var child = a[i];
+
+  var row = table.insertRow();
+  Object.keys(child).forEach(function(k) {
+        var cell = row.insertCell();
+    cell.appendChild(document.createTextNode(child[k]));
+  })
+}
+
+document.getElementById('items').appendChild(table);
+    
+     
+            
+    
+
    }
   });
- });
+ }, 5000);
  
+
+
+
 });
-
-
 
 
 </script>

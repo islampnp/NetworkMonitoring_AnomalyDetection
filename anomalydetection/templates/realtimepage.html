@@ -19,7 +19,7 @@
               Overview
             </div>
 
-            <div class="col-md-auto" id="detection" style="visibility: hidden;">
+            <div class="col col-lg-2 " id="detection" style="visibility: hidden;">
               
               <lottie-player  src=" https://assets3.lottiefiles.com/packages/lf20_S6ngTz/alert.json"  background="transparent"  speed="1" style="width: 70px; height: 50px;" loop autoplay> </lottie-player>
                <div><span id="p" style="margin: 30px;"></span></div>
@@ -46,61 +46,30 @@
     <div class="row align-items-center" style='margin: 60px;
     border-block-end: 2px solid #a19cbd;
     '>
-      <div class="col"  >
-        
-          <div class="row align-items-center">
+            <div class="col">
             <a id="start"  >
-            <div class="col">
-              <lottie-player id="str" src=" https://assets2.lottiefiles.com/private_files/lf30_gtENKI.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop autoplay> </lottie-player>
-        
-        
-            <span style="margin: 25px;">START</span>
-            </div>
-          </a >
-          <a id="button" >
-            <div class="col">
-               PUASE
-            </div></a>
             
-        </div>
+              <lottie-player id="str" src=" https://assets2.lottiefiles.com/private_files/lf30_gtENKI.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop autoplay> </lottie-player>
+             
+            <span style="margin: 25px;">START</span>        
+             </a >
+             </div>
+          <div class="col">
+          <a id="button" > PUASE</a>
+          </div>
      
-      </div>
-      <div class="col"id="loadbtn" >
+      <div class="col"id="loadbtn" style="visibility: hidden;" >
         <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 200px; height: 200px;"  loop autoplay> </lottie-player>
       </div>
-      <a  id ="btnuplazod" href="{% url 'detectionsrealtime'%}">
       <div class=" col">
-        
-          STOP 
-        </div>
-        </a>
+      <a  id ="btnuplazod" href="{% url 'detectionsrealtime'%}">STOP</a> 
+      </div>
+       
      
       </div>
     </div>
-  <div class="row">
-    <div class="col">
-      <div class="tableFix" id="employee_table">
-        <thead>
-          <tr>
-              <th>Name</th>
-              <th>ID</th>                  
-          </tr>                   
-      </thead>
-      </div>
-    </div>
-    ta
-  </div>
-
-      <p id="anomaly1"></p> 
-      <p id="anomaly2"></p> 
-      <p id="anomaly3"></p> 
-      <p id="anomaly4"></p> 
-      <p id="anomaly5"></p> 
-      <p id="anomaly6"></p> 
-      <p id="anomaly7"></p> 
-      <p id="anomaly8"></p> 
-      <p id="anomaly9"></p> 
-      <p id="anomaly10"></p> 
+    <h5></h5>
+    
     
   </div> 
 
@@ -111,14 +80,14 @@
 
 <script>
 
-
+var dataPoints = [];
 
 $('#start').click(function() {
 var aa = setInterval(function(){
 $.ajax({
     type: "GET",
     url: '{% url "detectionsrealtimefun"%}',
-    
+    data:{'a':'{{contextQ}}'},
     success: function(json){
       
         $("#p").html(json["contextQ"].length);
@@ -128,25 +97,25 @@ $.ajax({
           var audio = new Audio('../static/alarm.mp3');
           audio.play();
         }
+        for(var i=26; i<= 40;i++){
+          $('h5').html(json["contextQ"][i]["6"])
+
+        }
+        j=j+1;
+      
           
-        console.log(json["contextQ"]["0"]["8"])   
-
-        $('#anomaly1').html(json["contextQ"]["1"]["8"])  
-        $('#anomaly2').html(json["contextQ"]["2"]["8"])  
-        $('#anomaly3').html(json["contextQ"]["3"]["8"])  
-        $('#anomaly4').html(json["contextQ"]["4"]["8"])  
-        $('#anomaly5').html(json["contextQ"]["5"]["8"])  
-        $('#anomaly6').html(json["contextQ"]["6"]["8"])  
-        $('#anomaly7').html(json["contextQ"]["7"]["8"])  
-        $('#anomaly8').html(json["contextQ"]["8"]["8"])  
-        $('#anomaly9').html(json["contextQ"]["9"]["8"])  
-        $('#anomaly10').html(json["contextQ"]["10"]["8"])  
-
+        
+       
    },
+   
    });  
-   
-   
+ 
+
     }, 5000);
+      
+
+
+
 
   document.getElementById("loadbtn").style.visibility= "visible"
   document.getElementById("button").style.visibility= "visible"

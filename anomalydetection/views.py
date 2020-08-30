@@ -14,6 +14,7 @@ from glob import glob
 from joblib import dump, load #FOR saving 
 from tensorflow.keras.models import load_model
 import csv
+import json
 from .models import Revo
 from django.db import connection 
 
@@ -25,6 +26,8 @@ def home(request):
 
 @login_required
 def monitoring(request):
+    dic['s'] = 0
+    dic['e'] = 5
     return render(request,'monitoringpage.html',{'title':'Network Monitoring '})
 context={'filechecked' : [] ,'query' : []}
 @login_required
@@ -58,7 +61,35 @@ def startcicflowmter(request):
 
     return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
 
+def stopcicflowmter(request):
+     subprocess.call(["taskkill","/F","/IM","java.exe"])  
+     return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
 
+def showdata(request):
+    print('start')
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+   
+
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
+        print(t)
+        csvfile = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        
+        flows = pd.read_csv(csvfile[0])
+        flows=flows[flows.columns[1:7]] 
+        print(flows.shape)
+        q=flows.shape[0]
+        print(dic['s'])
+        print(dic['e'])
+        print(flows.shape)
+        if(flows.shape[0] >= dic['e']) :      
+            flows = flows.iloc[dic['s']:dic['e'],:]
+            dic['s'] = dic['e']
+            dic['e'] = q
+            json_flow = flows.values.tolist()
+
+            return JsonResponse({'flows':json_flow})
+    return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
+          
 def simple_upload(request):
     if request.method == 'POST' and request.FILES['csvfile']:
         myfile = request.FILES['csvfile']
@@ -187,7 +218,7 @@ def csvtomodle(filecsv) :
     with open(filecsv) as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
-            if row['Classification'] != 'BENIGN' :
+            if ((row['Classification'] != 'BENIGN') and (row['Protocol'] != "0") and (row['Src Port'] !="0") and (row['Src IP'] != "0" ) and (row['Dst IP'] != "0")) :
                 # The header row values become your keys
                
                 iid = row['']
@@ -224,15 +255,16 @@ def detectionsrealtimefun(request):
         context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
         flows = pd.read_csv(context['filechecked'][0])
         q=flows.shape[0]
+        print(dic['s'])
         print(dic['e'])
-        print(q)
-        if(flows.shape[0] >= dic['e']) :    
-            print(flows.shape)
+        print(flows.shape)
+        
+        if(flows.shape[0] > dic['e']) :    
+           
             flows = flows.iloc[dic['s']:dic['e'],:]
             dic['s'] = dic['e']
             dic['e'] = q
-            print(dic)
-           
+          
             flows=flows[flows.columns[:-1]]
             flows = flows.replace([np.inf, -np.inf], np.nan)
             flows = flows.dropna(axis=0,how='any') 

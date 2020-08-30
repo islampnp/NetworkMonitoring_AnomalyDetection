@@ -38,6 +38,9 @@ urlpatterns = [
     path('', auth_views.LoginView.as_view(template_name='users/authentification/login.html'), name='login'),
     path('logout/', auth_views.LogoutView.as_view(template_name='users/authentification/logout.html'), name='logout'),
     path('startcicflowmter/',anomalymonitoring_views.startcicflowmter,name='startcicflowmter'),
+    path('showdata/',anomalymonitoring_views.showdata,name='showdata'),
+
+    path('stopcicflowmter/',anomalymonitoring_views.stopcicflowmter,name='stopcicflowmter'),
     path('satrtanomleisdetection/',anomalymonitoring_views.satrtanomleisdetection,name='satrtanomleisdetection'),
 
     
