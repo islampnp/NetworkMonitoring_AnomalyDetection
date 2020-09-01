@@ -2,12 +2,23 @@
 {% load crispy_forms_tags %}
 {% block content %} 
         
-        <ul>
-            <li ><a href="{%url 'monitoring'%}">Monitoring</a></li>
-            <li><a href="{% url 'detection' %}">Anomalies Detction</a></li>
-            <li><a href="{% url 'realtime' %}">Real Time Anomalies Detction</a></li>
+            <ul>
+            <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
+            <div class="sortable-accordion"><li>
+              <h3>Anomalies Detction</h3>
+            <div class="inner">
+              <ul class="sortable">
+                <li class="ui-state-default"><a href="{% url 'detection' %}">OFFLINE</a></li> 
+                 <li class="ui-state-default"><a href="{% url 'realtime' %}">Real Time </a></li>  
+                 
+               
+             </ul> 
+         </div></li></div>
+            
+            
+     
             <li><a href="{% url 'logout' %}">Logout</a></li>
-
+        
         </ul> 
         
         
@@ -31,76 +42,32 @@
 
         
 
-<div class="container  ">
+<div class="container ">
+ <div class="ml-5">
+<div class="row align-items-center mt-5 ml-5 mr-5">
  
-<div class="row align-items-center mt-5">
-  <div class="col-lg-2" id ="button">
-    <a href="{% url 'startcicflowmter'%}" >Start CICFlowMetre</a>
-  </div>
-  <div class="col-lg-2">
-    <a href="{% url 'stopcicflowmter'%}" id ="button">Stop CICFlowMetre</a>
-  </div>
-  <div class="col col-md-auto">   
-  <form  method="POST" action="{% url 'simple_upload' %}"enctype="multipart/form-data" >
-    {% csrf_token %}       
-      <div class="row align-items-center">
-        <div class="col">
-          <div id="button2">
-              <span ><i class="fas fa-upload ml-3" aria-hidden="true"></i></span>
-              <input type="file" multiple name="csvfile">
-         </div>
-        </div>
-     
-    <!--               <form action="" method="POST" enctype="multipart/form-data">                 {% csrf_token %}
-                <div class="mt-3 ml-2">                   <p class="mb-1">p>
-                  <input type="file" name="csvfile">             
-               </div>       
-                <div class="form-check ml-3" >
-                                  <input type="checkbox" value="delete" class="form-check-input" id="delete" name="delete">
-                  <label class="form-check-label" for="delete">Delete if exist</label>
-                </div>
-              -->
-        <div class="col col-md-auto">
-          <div class="row align-items-center">
-                   
-            <div class="col">
-              <button style="border-width:2px;border-style: solid;border-color: #302673;" type="submit" class="btn" id="btnuplaod" >Uplaod</button>     
-              
-              
-            </div>
-                <div class="col">
-                  <button type="button" name="load_data" id="load_data" class="btn" style="border-width:2px;border-style: solid;border-color: #302673;" >show </button>
-                </div>
-       
-        
-
-        </div>
-        </div>
+  <a href="{% url 'startcicflowmter'%}"id ="button" >
+    <div class="col-6" >
+      Start CICFlowMetre
+    </div></a>
+    <div class="col-lg-4" >
+   
+      <lottie-player  src=" https://assets5.lottiefiles.com/temp/lf20_RQNj3O.json"  background="transparent"  speed="1" style="width: 300px; height: 300px;" loop autoplay> </lottie-player>
+    </div>
+   
+    <a class="stopcic"id ="button" >
+      <div class="col-md-auto" >
+        Stop CICFlowMetre
       </div>
-     
-               
+    </a>
+ 
   
-     
-    
-      
-  </form> 
-</div>  <div class="col-12">
-  {% if messages %}
-    {% for message in messages %}
 
-    <strong>{{message|safe}}</strong> 
   
-    {% endfor %}
-  {% endif %}
-  {% if uploaded_file_url %}
-      <p>File uploaded  <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
-  {% endif %}
-      
-</div>
 
   </div> 
   
-
+</div>
   <table  class="table table-hover table-fixed mt-5 " 
   width="100%" >
 
@@ -115,20 +82,19 @@
   </tr>
 </thead>
 
-<tbody id="items"  class="scrollbar ml-1">
+<tbody id="items" value = "items" name="items" class="scrollbar ml-1">
 
 </tbody>
 
 </table>
-
-
-                            
+<a id="showcsvfile" style="visibility: hidden;"> show the CSV file</a>                           
            
         </div>          
     </div>
 
 
 <script>
+
    function addHeaders(table, keys) {
   var row = table.insertRow();
   for( var i = 0; i < keys.length; i++ ) {
@@ -136,7 +102,9 @@
     cell.appendChild(document.createTextNode(keys[i]));
   }
 }
-$('#button').click(function(){
+var table = document.createElement('table');
+
+if("{{title}}" == "CICflowmetrstarted") {
 var aa = setInterval(function(){
 
    var a = document.getElementById('mytable')
@@ -145,29 +113,29 @@ var aa = setInterval(function(){
   $.ajax({
     type: "GET",
     url: '{% url "showdata"%}',
-  
     success:function(data)
    {
     
     a= data["flows"]
  
 
-var table = document.createElement('table');
+
 for( var i = 0; i < a.length; i++ ) {
 
   var child = a[i];
-
+ 
   var row = table.insertRow();
   Object.keys(child).forEach(function(k) {
         var cell = row.insertCell();
     cell.appendChild(document.createTextNode(child[k]));
   })
+ 
 }
 
 document.getElementById('items').appendChild(table);
     
      
-            
+
     
 
    }
@@ -175,10 +143,31 @@ document.getElementById('items').appendChild(table);
  }, 5000);
  
 
+document.getElementById("showcsvfile").style.visibility = "visible"
 
+}
 
-});
+$('.stopcic').click(function(){
 
+  $.ajax({
+    type: "GET",
+    url: '{% url "stopcicflowmter"%}',
+    success:function(data)
+   {
+    
+    alert('CICFLOWMETRE STOPED')
+  }})
+})
+$('#showcsvfile').click(function(){
 
+$.ajax({
+  type: "GET",
+  url: '{% url "showcsvfile"%}',
+  success:function(data)
+ {
+  
+  
+}})
+})
 </script>
     {%endblock content%}

@@ -38,6 +38,27 @@
 
 
 
+.sortable-accordion h3 {
+	font-size:16px;
+}
+
+.sortable-accordion li{
+	font-size:14px;
+	color:#eeeded;
+ 
+}
+.sortable-accordion li:hover{
+	cursor:pointer;	
+	background-color:#302673;
+}
+
+.ui-sortable-placeholder{
+	
+	background:#302673 !important;
+
+}
+
+
 #textanomaly{
   font-size: 1.3rem;
   margin-left: 1.5rem;
@@ -80,11 +101,13 @@
   width: 25px;
 }
 
-.wrapper .sidebar ul li:hover{
+.wrapper .sidebar  ul li:hover{
   background-color: #3c3183;
 }
-    
-.wrapper .sidebar ul li:hover a{
+.wrapper .sidebar .sortable-accordion .inner ul li:hover a{
+ color: #d4c859;
+}    
+.wrapper .sidebar  ul li:hover a{
   color: #eeeded;
 }
  
@@ -176,9 +199,13 @@ td{
   padding: 10px;
   background-image: url("https://assets5.lottiefiles.com/packages/lf20_8Ci3wv.json") ;
 }
-label:hover{
-  
+.boxes label:hover {
+
   background: #e0e4e8;
+}
+.boxes button:hover {
+
+background: #e0e4e8;
 }
 
 /*Checkboxes styles*/
@@ -355,7 +382,26 @@ input[type="checkbox"]:checked + label:before {
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.12.0/js/mdb.min.js"></script>
 
 
-      
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>    
+<script>
+$(document).ready(function(){	
+	
+	$(function () {
+    //  Accordion Panels
+    $(".sortable-accordion div").show();
+    $('.sortable-accordion div').slideToggle('slow');
+    $(".sortable-accordion h3").click(function () {
+        $(this).next(".inner").slideToggle().siblings(".inner:visible").slideUp();
+        $(this).toggleClass("current");
+        $(this).siblings("h3").removeClass("current");
+    });
+});
+  
+$( ".sortable" ).sortable({   
+	placeholder: "ui-sortable-placeholder"   
+}).find("li").append("<span class='options'></span>");  
+})
+ </script>
+
   </body>
 </html>

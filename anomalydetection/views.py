@@ -58,12 +58,23 @@ def startcicflowmter(request):
     #Popen("E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat",creationflags=subprocess.CREATE_NEW_CONSOLE)
     
     subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin"')
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
+       
+        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        
+    else : 
+        messages.error(request, 'strat CICflowmetr Firstly')
+    return render(request,'monitoringpage.html',{'title':'CICflowmetrstarted'})
 
-    return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
+def showcsvfile(request):
+    subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin\\data\\daily"')
+    return JsonResponse({'t':'t'}) 
 
 def stopcicflowmter(request):
-     subprocess.call(["taskkill","/F","/IM","java.exe"])  
-     return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
+     subprocess.call(["taskkill","/F","/IM","java.exe"]) 
+     
+     return JsonResponse({'t':'t'}) 
 
 def showdata(request):
     print('start')
@@ -89,8 +100,10 @@ def showdata(request):
 
             return JsonResponse({'flows':json_flow})
     return render(request,'monitoringpage.html',{'title':'Network Monitoring and anomalys detection system'})
-          
+
+nameoffile = {'name':[] }      
 def simple_upload(request):
+    context['filechecked'] = glob("media/*.csv")
     if request.method == 'POST' and request.FILES['csvfile']:
         myfile = request.FILES['csvfile']
         
@@ -107,15 +120,21 @@ def simple_upload(request):
                 fs = FileSystemStorage()
                 filename = fs.save(myfile.name, myfile)
                 #df = pd.read_csv(myfile)
+                nameoffile['name']=myfile.name
                 uploaded_file_url = fs.url(filename)
-               
-                return render(request, 'monitoringpage.html', {
-                    'uploaded_file_url': uploaded_file_url
-                })   
+              
+                return render(request, 'detectionpage.html', {'uploaded_file_url': uploaded_file_url,"context"  :context})   
+                
 
-    return render(request, 'monitoringpage.html')
+    return render(request, 'detectionpage.html',{"context" :context})
 
 import time
+
+def deletefile(request):
+    if request.method == "POST":
+        os.remove(request.POST.getlist('delete')[0])
+        context['filechecked'] = glob("media/*.csv")
+    return render(request, 'detectionpage.html',{"context" :context})
 
 def satrtanomleisdetection(request):
 
@@ -126,11 +145,10 @@ def satrtanomleisdetection(request):
         
     else :
         if request.method == "POST":
-            a = request.POST.getlist('checkfile')
-            if len(a) == 0 :
-                messages.error(request, 'Chose your CSV file for the detection part please ')
-            else : 
-                    
+                a = request.POST.getlist('checkfile')
+                if(nameoffile['name']!=''):
+                    a.append("media\\"+ nameoffile['name'])
+             
                 flows = pd.read_csv(a[0])
                 for i in a[1:] :
                     flows=pd.concat([flows,pd.read_csv(i)]) 

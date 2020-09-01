@@ -3,13 +3,23 @@
 {% load crispy_forms_tags %}
 {% block content %}     
     
-        <ul>
-            <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
-            <li><a href="{% url 'detection' %}">Anomalies Detction</a></li>
-            <li><a href="{% url 'realtime' %}">Real Time Anomalies Detction</a></li>
-            <li><a href="{% url 'logout' %}">Logout</a></li>
-        
-        </ul> 
+<ul>
+  <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
+  <div class="sortable-accordion"><li>
+    <h3>Anomalies Detction</h3>
+  <div class="inner">
+    <ul class="sortable">
+      <li class="ui-state-default"><a href="{% url 'detection' %}">OFFLINE</a></li> 
+       <li class="ui-state-default"><a href="{% url 'realtime' %}">Real Time </a></li>  
+       
+     
+   </ul> 
+</div></li></div>
+  
+
+  <li><a href="{% url 'logout' %}">Logout</a></li>
+
+</ul> 
         
       </div>
     <div class="main_content">
@@ -43,7 +53,7 @@
 
 
 <div class="container  ">
-    <div class="row align-items-center" style='margin: 60px;
+    <div class="row align-items-center " style='margin: 0px 200px 0px 200px ;
     border-block-end: 2px solid #a19cbd;
     '>
             <div class="col">
@@ -54,12 +64,9 @@
             <span style="margin: 25px;">START</span>        
              </a >
              </div>
-          <div class="col">
-          <a id="button" > PUASE</a>
-          </div>
-     
+  
       <div class="col"id="loadbtn" style="visibility: hidden;" >
-        <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 200px; height: 200px;"  loop autoplay> </lottie-player>
+        <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player>
       </div>
       <div class=" col">
       <a  id ="btnuplazod" href="{% url 'detectionsrealtime'%}">STOP</a> 
@@ -67,6 +74,28 @@
        
      
       </div>
+      
+  <table  class="table table-hover table-fixed mt-5 " 
+  width="100%" >
+
+  <thead id="mytable" >              
+  <tr>
+  <th style="width: 50px" >#</th>
+  <th style="width: 50px">Flow Id</th>
+  <th style="width: 50px" >Src IP</th>
+  <th style="width: 50px">Src Port</th>
+  <th style="width: 50px">Dst IP</th>
+  <th style="width: 50px">Dst Port</th>
+  <th style="width: 50px">Protocol</th>
+  <th style="width: 50px">Timestamp</th>
+  </tr>
+</thead>
+
+<tbody id="items" value = "items" name="items" class="scrollbar ml-1">
+
+</tbody>
+
+</table>
     </div>
     <h5></h5>
     
@@ -80,7 +109,16 @@
 
 <script>
 
-var dataPoints = [];
+
+
+
+function addHeaders(table, keys) {
+var row = table.insertRow();
+for( var i = 0; i < keys.length; i++ ) {
+ var cell = row.insertCell();
+ cell.appendChild(document.createTextNode(keys[i]));
+}}
+ 
 
 $('#start').click(function() {
 var aa = setInterval(function(){
@@ -97,15 +135,28 @@ $.ajax({
           var audio = new Audio('../static/alarm.mp3');
           audio.play();
         }
-        for(var i=26; i<= 40;i++){
-          $('h5').html(json["contextQ"][i]["6"])
+        a= json["contextQ"]
+ 
 
-        }
-        j=j+1;
-      
-          
-        
-       
+
+for( var i = 0; i < a.length; i++ ) {
+
+  var child = a[i];
+  var table = document.createElement('table');
+  var row = table.insertRow();
+  Object.keys(child).forEach(function(k) {
+        var cell = row.insertCell();
+    cell.appendChild(document.createTextNode(child[k]));
+  })
+ 
+}
+
+document.getElementById('items').appendChild(table);
+    
+     
+
+    
+
    },
    
    });  
@@ -114,22 +165,16 @@ $.ajax({
     }, 5000);
       
 
-
+ 
 
 
   document.getElementById("loadbtn").style.visibility= "visible"
-  document.getElementById("button").style.visibility= "visible"
+ 
   document.getElementById("btnuplazod").style.visibility= "visible"
   document.getElementById("start").style.visibility= "hidden"
   document.getElementById("str").src = "https://assets4.lottiefiles.com/packages/lf20_FtD13Z.json"
   alert("detection started")
-  $('#button').click(function() {
-  clearInterval(aa);
-  alert("PAUSE ")
-  document.getElementById("start").style.visibility= "visible"
   
-
-});
 $('#btnuplazod').click(function() {
   alert("do you stop the real time detection ? ")
   document.getElementById("start").style.visibility= "visible"
