@@ -9,7 +9,7 @@
     <h3>Anomalies Detction</h3>
   <div class="inner">
     <ul class="sortable">
-      <li class="ui-state-default"><a href="{% url 'detection' %}">OFFLINE</a></li> 
+      <li class="ui-state-default"><a href="{% url 'detection' %}">Offline</a></li> 
        <li class="ui-state-default"><a href="{% url 'realtime' %}">Real Time </a></li>  
        
      
@@ -53,9 +53,15 @@
 
 
 <div class="container  ">
-    <div class="row align-items-center " style='margin: 0px 200px 0px 200px ;
+  <div class="row align-items-center">
+          <div class="col">
+
+
+    </div>
+    <div class="col-6">
+    <div class="row align-items-center " style='
     border-block-end: 2px solid #a19cbd;
-    '>
+    '> 
             <div class="col">
             <a id="start"  >
             
@@ -63,31 +69,38 @@
              
             <span style="margin: 25px;">START</span>        
              </a >
+             <a id ="buttonstart"  >
+              <p           
+               >Start CICFlowMetre </p>
+              </a>  
              </div>
   
       <div class="col"id="loadbtn" style="visibility: hidden;" >
         <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player>
       </div>
       <div class=" col">
-      <a  id ="btnuplazod" href="{% url 'detectionsrealtime'%}">STOP</a> 
+      <a  id ="btnuplazod" >STOP</a> 
       </div>
        
-     
+    </div>
       </div>
-      
-  <table  class="table table-hover table-fixed mt-5 " 
+    <div class="col"></div></div>
+    <div class="mt-5"> <span id="numflow" ></span>
+    <span>Flows</span></div>
+    
+  <table  class="table table-hover table-fixed  " 
   width="100%" >
 
-  <thead id="mytable" >              
+  <thead id="mytable" style="background-color: #302673;" >              
   <tr>
-  <th style="width: 50px" >#</th>
-  <th style="width: 50px">Flow Id</th>
-  <th style="width: 50px" >Src IP</th>
-  <th style="width: 50px">Src Port</th>
-  <th style="width: 50px">Dst IP</th>
-  <th style="width: 50px">Dst Port</th>
-  <th style="width: 50px">Protocol</th>
-  <th style="width: 50px">Timestamp</th>
+  <th style="width: 20px" >#</th>
+  <th style="width: 40px">Flow Id</th>
+  <th style="width: 40px" >Src IP</th>
+  <th style="width: 40px">Src Port</th>
+  <th style="width: 40px">Dst IP</th>
+  <th style="width: 40px">Dst Port</th>
+  <th style="width: 40px">Protocol</th>
+  <th style="width: 40px">Timestamp</th>
   </tr>
 </thead>
 
@@ -112,22 +125,16 @@
 
 
 
-function addHeaders(table, keys) {
-var row = table.insertRow();
-for( var i = 0; i < keys.length; i++ ) {
- var cell = row.insertCell();
- cell.appendChild(document.createTextNode(keys[i]));
-}}
- 
-
+var a;
 $('#start').click(function() {
 var aa = setInterval(function(){
+
 $.ajax({
     type: "GET",
     url: '{% url "detectionsrealtimefun"%}',
-    data:{'a':'{{contextQ}}'},
+    
     success: function(json){
-      
+      $('#numflow').html(json["t"])
         $("#p").html(json["contextQ"].length);
         document.getElementById("detection").style.visibility = "visible";
         
@@ -136,58 +143,83 @@ $.ajax({
           audio.play();
         }
         a= json["contextQ"]
- 
-
-
-for( var i = 0; i < a.length; i++ ) {
-
-  var child = a[i];
-  var table = document.createElement('table');
-  var row = table.insertRow();
-  Object.keys(child).forEach(function(k) {
-        var cell = row.insertCell();
-    cell.appendChild(document.createTextNode(child[k]));
-  })
- 
-}
-
-document.getElementById('items').appendChild(table);
     
-     
-
-    
-
+        
    },
    
    });  
- 
 
-    }, 5000);
+if($("#items").empty()){
+  var table = document.createElement('table');
+  
+  for( var i = 0; i < a.length; i++ ) {
+  
+  var child = a[i];
+  
+  var row = table.insertRow();
+  Object.keys(child).forEach(function(k) {
+        var cell = row.insertCell();
+        console.log(child[0])
+    cell.appendChild(document.createTextNode(child[k]));
+  })
+  
+  }
+ 
+  
+        
+  document.getElementById('items').appendChild(table);
+
+} else{
+  document.getElementById('items')='a'
+  }
+
+
+
+    }
+    
+    ,
+     5000);
       
 
  
 
 
   document.getElementById("loadbtn").style.visibility= "visible"
- 
+  document.getElementById("buttonstart").style.visibility="hidden"
   document.getElementById("btnuplazod").style.visibility= "visible"
   document.getElementById("start").style.visibility= "hidden"
   document.getElementById("str").src = "https://assets4.lottiefiles.com/packages/lf20_FtD13Z.json"
   alert("detection started")
   
 $('#btnuplazod').click(function() {
-  alert("do you stop the real time detection ? ")
+  $.ajax({
+    type: "GET",
+    url: '{% url "stopcicflowmter"%}',
+    
+    success: function(json){
+
+    }})
   document.getElementById("start").style.visibility= "visible"
-  document.getElementById("button").style.visibility= "hidden"
-  document.getElementById("btnuplazod").style.visibility= "hidden"
+  document.getElementById("buttonstart").style.visibility="visible"
+
   document.getElementById("loadbtn").style.visibility= "hidden"
 
   clearInterval(aa);
 });
-    
+ 
 });
 
+$('#buttonstart').click(function(){
+  $.ajax({
+    type: "GET",
+    url: '{% url "startcicflowmter"%}',
+    
+    success: function(json){
 
+    }})
+
+})
+   
  </script>
 
 {%endblock content%}

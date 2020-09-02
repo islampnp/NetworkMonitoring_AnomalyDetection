@@ -31,7 +31,6 @@ urlpatterns = [
     path('detectionsrealtime/', anomalymonitoring_views.detectionsrealtime, name='detectionsrealtime'),
     path('realtime/',anomalymonitoring_views.realtime,name='realtime'),
     path('detectionsrealtimefun/',anomalymonitoring_views.detectionsrealtimefun,name='detectionsrealtimefun'),
-
     
     path('register/', user_views.register, name='register'),
     path('profile/', user_views.profile, name='profile'),

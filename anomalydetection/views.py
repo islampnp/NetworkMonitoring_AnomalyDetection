@@ -45,6 +45,10 @@ dic= {'s':0,'e':5}
 def realtime(request):
     delete = Revo.objects.all()
     delete.delete()
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
+        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        
     dic['s'] = 0
     dic['e'] = 5
     return render(request,"realtimepage.html",{"title":"Real Time Detection"} )
@@ -65,16 +69,17 @@ def startcicflowmter(request):
         
     else : 
         messages.error(request, 'strat CICflowmetr Firstly')
-    return render(request,'monitoringpage.html',{'title':'CICflowmetrstarted'})
+    return JsonResponse({'T':'CICflowMetre STRATED'})
 
 def showcsvfile(request):
     subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin\\data\\daily"')
     return JsonResponse({'t':'t'}) 
 
 def stopcicflowmter(request):
-     subprocess.call(["taskkill","/F","/IM","java.exe"]) 
-     
-     return JsonResponse({'t':'t'}) 
+    subprocess.call(["taskkill","/F","/IM","java.exe"]) 
+    delete = Revo.objects.all()
+    delete.delete()
+    return JsonResponse({'t':'t'}) 
 
 def showdata(request):
     print('start')
@@ -257,12 +262,13 @@ def csvtomodle(filecsv) :
 def detectionsrealtime(request):
     delete = Revo.objects.all()
     delete.delete()
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
+        context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
     dic['s'] = 0
     dic['e'] = 5
     return render(request,'realtimepage.html')
-    
-
-
 
 
 def detectionsrealtimefun(request):
@@ -271,6 +277,7 @@ def detectionsrealtimefun(request):
     t = pd.to_datetime('today').strftime('%Y-%m-%d')
     if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
         context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        
         flows = pd.read_csv(context['filechecked'][0])
         q=flows.shape[0]
         print(dic['s'])
@@ -307,10 +314,12 @@ def detectionsrealtimefun(request):
                 context['query'] = cursor.fetchall()
             print (len(context['query']))
             
-            return JsonResponse({'contextQ':context['query']}) 
+            
+            return JsonResponse({'contextQ':context['query'],'t':q}) 
+            
         else : 
             
-            return render(request,'realtimepage.html',{'contextQ':context['query']})            
+            return render(request,'realtimepage.html',{'contextQ':context['query'],'t':q})            
     else:
         return render(request,'realtimepage.html')
   
