@@ -40,6 +40,7 @@ urlpatterns = [
     path('showdata/',anomalymonitoring_views.showdata,name='showdata'),
     path('showcsvfile/',anomalymonitoring_views.showcsvfile,name='showcsvfile'),
     path('deletefile/',anomalymonitoring_views.deletefile,name='deletefile'),
+    path('deletecsv/',anomalymonitoring_views.deletecsv,name='deletecsv'),
 
     path('stopcicflowmter/',anomalymonitoring_views.stopcicflowmter,name='stopcicflowmter'),
     path('satrtanomleisdetection/',anomalymonitoring_views.satrtanomleisdetection,name='satrtanomleisdetection'),

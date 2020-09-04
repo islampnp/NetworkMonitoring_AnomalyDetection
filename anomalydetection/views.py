@@ -17,7 +17,7 @@ import csv
 import json
 from .models import Revo
 from django.db import connection 
-
+from subprocess import Popen
 
 
 @login_required
@@ -45,10 +45,6 @@ dic= {'s':0,'e':5}
 def realtime(request):
     delete = Revo.objects.all()
     delete.delete()
-    t = pd.to_datetime('today').strftime('%Y-%m-%d')
-    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
-        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
-        
     dic['s'] = 0
     dic['e'] = 5
     return render(request,"realtimepage.html",{"title":"Real Time Detection"} )
@@ -60,19 +56,20 @@ def startcicflowmter(request):
     #os.system("cmd E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat")
     #subprocess.call(["E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat"], shell=True)
     #Popen("E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat",creationflags=subprocess.CREATE_NEW_CONSOLE)
-    
+    dic['s'] = 0
+    dic['e'] = 5
     subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin"')
     t = pd.to_datetime('today').strftime('%Y-%m-%d')
     if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
        
         os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
         
-    else : 
-        messages.error(request, 'strat CICflowmetr Firstly')
     return JsonResponse({'T':'CICflowMetre STRATED'})
 
 def showcsvfile(request):
-    subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin\\data\\daily"')
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+
+    p = Popen('E:\\PFE\\cicflowmeter\\bin\data\daily\\'+t+'_Flow.csv',shell=True)
     return JsonResponse({'t':'t'}) 
 
 def stopcicflowmter(request):
@@ -125,6 +122,7 @@ def simple_upload(request):
                 fs = FileSystemStorage()
                 filename = fs.save(myfile.name, myfile)
                 #df = pd.read_csv(myfile)
+             
                 nameoffile['name']=myfile.name
                 uploaded_file_url = fs.url(filename)
               
@@ -141,6 +139,14 @@ def deletefile(request):
         context['filechecked'] = glob("media/*.csv")
     return render(request, 'detectionpage.html',{"context" :context})
 
+def deletecsv(request):
+    dic['s'] = 0
+    dic['e'] = 5
+    t = pd.to_datetime('today').strftime('%Y-%m-%d')
+    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
+        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+        return JsonResponse({'t':'t'})
+
 def satrtanomleisdetection(request):
 
     context['filechecked'] = glob("media/*.csv")
@@ -151,85 +157,96 @@ def satrtanomleisdetection(request):
     else :
         if request.method == "POST":
                 a = request.POST.getlist('checkfile')
-                if(nameoffile['name']!=''):
-                    a.append("media\\"+ nameoffile['name'])
-             
-                flows = pd.read_csv(a[0])
-                for i in a[1:] :
-                    flows=pd.concat([flows,pd.read_csv(i)]) 
-            
-               
-                #Preprocessing
-                #Storing THE SOCKET INFO COLUMNS into a variable:
-                                
-                #Dropping the Label column
-                flows=flows[flows.columns[:-1]]
+                print(a)
+                print("dddddddd")
+                if ((len(a) != 0) ):
+                    if(nameoffile['name']!=[]):
+                        a.append("media\\"+ nameoffile['name'])
+                        nameoffile['name'] = []
+                        print(a)
 
-                #REPLACING inf and -inf values with NAN:
-                flows = flows.replace([np.inf, -np.inf], np.nan)
+                    print(a)
+                    print("ssssssssssssss")
 
-                #REMOVING NAN INSTANCES :
-                flows = flows.dropna(axis=0,how='any') 
-
-                #DROPPING THE SOCKET INFO COLUMNS:
-
-                socket_info=flows[flows.columns[0:7]] 
-                flows=flows[flows.columns[7:]]
-                
-
-                for i in flows.columns:
-                    flows[i]=flows[i].astype(float)
-                
-                #SCALING THE FEATURES
-                #Same thing concerning the path 
-                scaler =load('anomalydetection/static/model/Scaler.joblib')
-                flows = scaler.transform(flows)
-
-                #Use of PCA
-                #Remeber the path 
-                #pca =load('anomalydetection/static/model/PCA.joblib')
-                #flows_pca = pca.transform(flows)
-
-                #The reverse Hot Encoding (from binary arrays to string )
-                encoder=load('anomalydetection/static/model/OHE.joblib')
-                #END of Preprocessing 
-
-                #Anomaly detection (Two possibilities available for now, untill we choose the final one )
-
-                #In case of using ANN without pca
-                ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
-                result = ANN.predict(flows)                
-                result = encoder.inverse_transform(result)
-                result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a onversion 
-                classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True, how='left')           
-                
-                classification_result.to_csv('trial1.csv')
-
-                
-                #In case of using PCA-ANN:
-                #ANN_PCA = load_model("anomalydetection/static/model/FINAL_PCA-ANN.h5")
-                #result_PCA = ANN_PCA.predict(flows_pca)
-#
-                #result_PCA = encoder.inverse_transform(result_PCA)
-                #result_DF_PCA= pd.DataFrame(result_PCA, index=None, columns=['Classification'])
-                #classification_rsult_PCA = socket_info.reset_index().merge(result_DF_PCA.reset_index(), #left_index=True,right_index=True, how='left')
-                #lassification_result_PCA.to_csv('trial2.csv') #Export the result to a csv file
-#
-                delete = Revo.objects.all()
-                delete.delete()
-                csvtomodle("trial1.csv")
-                
-            
-                cursor = connection.cursor()
-                try:
-                    cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo' ORDER BY ID DESC LIMIT 1000")
                     
-                finally:
-                   
-                    context['query'] = cursor.fetchall()
+                    flows = pd.read_csv(a[0])
+                    for i in a[1:] :
+                        print(flows.shape)
+                        flows=pd.concat([flows,pd.read_csv(i)]) 
+
+
+                    #Preprocessing
+                    #Storing THE SOCKET INFO COLUMNS into a variable:
+
+                    #Dropping the Label column
+                    flows=flows[flows.columns[:-1]]
+
+                    #REPLACING inf and -inf values with NAN:
+                    flows = flows.replace([np.inf, -np.inf], np.nan)
+
+                    #REMOVING NAN INSTANCES :
+                    flows = flows.dropna(axis=0,how='any') 
+
+                    #DROPPING THE SOCKET INFO COLUMNS:
+
+                    socket_info=flows[flows.columns[0:7]] 
+                    flows=flows[flows.columns[7:]]
+
+
+                    for i in flows.columns:
+                        flows[i]=flows[i].astype(float)
+
+                    #SCALING THE FEATURES
+                    #Same thing concerning the path 
+                    scaler =load('anomalydetection/static/model/Scaler.joblib')
+                    flows = scaler.transform(flows)
+
+                    #Use of PCA
+                    #Remeber the path 
+                    #pca =load('anomalydetection/static/model/PCA.joblib')
+                    #flows_pca = pca.transform(flows)
+
+                    #The reverse Hot Encoding (from binary arrays to string )
+                    encoder=load('anomalydetection/static/model/OHE.joblib')
+                    #END of Preprocessing 
+
+                    #Anomaly detection (Two possibilities available for now, untill we choose the final one )
+
+                    #In case of using ANN without pca
+                    ANN = load_model("anomalydetection/static/model/FINAL_ANN_moh33.h5") #the path :)
+                    result = ANN.predict(flows)                
+                    result = encoder.inverse_transform(result)
+                    result_DF= pd.DataFrame(result, index=None, columns=['Classification']) #Needed a onversion 
+                    classification_result = socket_info.reset_index().merge(result_DF.reset_index(), left_index=True, right_index=True,     how='left')           
+
+                    classification_result.to_csv('trial1.csv')
+
+
+                    #In case of using PCA-ANN:
+                    #ANN_PCA = load_model("anomalydetection/static/model/FINAL_PCA-ANN.h5")
+                    #result_PCA = ANN_PCA.predict(flows_pca)
+#   
+                    #result_PCA = encoder.inverse_transform(result_PCA)
+                    #result_DF_PCA= pd.DataFrame(result_PCA, index=None, columns=['Classification'])
+                    #classification_rsult_PCA = socket_info.reset_index().merge(result_DF_PCA.reset_index(), #left_index=True,right_index=True,     how='left')
+                    #lassification_result_PCA.to_csv('trial2.csv') #Export the result to a csv file
+#   
+                    delete = Revo.objects.all()
+                    delete.delete()
+                    csvtomodle("trial1.csv")
+
+
+                    cursor = connection.cursor()
+                    try:
+                        cursor.execute("SELECT Id,Flow_ID,Src_IP,Src_Port,Dst_IP,Dst_Port,Protocol,Timestamp,Classification  FROM 'anomalydetection_revo'   ORDER BY ID DESC LIMIT 1000")
+
+                    finally:
                     
+                        context['query'] = cursor.fetchall()
+                        return render(request ,'detectionpage.html',{"context" :context,"title":"satrtanomleisdetection"})   
+
                     
-    return render(request ,'detectionpage.html',{"context" :context})
+    return render(request ,'detectionpage.html',{"context" :context,"title":"satrtanomleisdetection"})
     
                 
              
@@ -319,7 +336,7 @@ def detectionsrealtimefun(request):
             
         else : 
             
-            return render(request,'realtimepage.html',{'contextQ':context['query'],'t':q})            
+            return render(request,'realtimepage.html',{'contextQ':context['query']})            
     else:
         return render(request,'realtimepage.html')
   

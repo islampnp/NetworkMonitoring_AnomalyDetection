@@ -79,7 +79,7 @@
         <lottie-player  src=" https://assets10.lottiefiles.com/datafiles/ORpUnaV6z0mJ17E/data.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player>
       </div>
       <div class=" col">
-      <a  id ="btnuplazod" >STOP</a> 
+        <button id="btnuplazod" data-toggle="modal" data-target="#centralModalSuccess">STOP </button>
       </div>
        
     </div>
@@ -109,14 +109,54 @@
 </tbody>
 
 </table>
+
+<a id="showcsvfile" style="visibility: hidden;"> show the CSV file</a> 
     </div>
     <h5></h5>
     
     
   </div> 
+  
 
 
-
+  
+ 
+  <!-- Central Modal Medium Success -->
+  <div class="modal fade" id="centralModalSuccess" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div id="alretId" class="modal-dialog modal-notify modal-success" role="document">
+      <!--Content-->
+      <div class="modal-content">
+        <!--Header-->
+        <div class="modal-header">
+          <p id='header-modal'class="heading lead">Anomaly Detection Report</p>
+ 
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true" class="white-text">&times;</span>
+          </button>
+        </div>
+ 
+        <!--Body-->
+        <div class="modal-body">
+          <div class="text-center">
+            <i class="fas fa-check fa-4x mb-3 animated rotateIn"></i>
+            <p>No anomalies encountered, you are good to go!</p>
+          </div>
+        
+        </div>
+        <div class="numdetecte" style="width: 5%;margin: 0 auto; color:#302673; font-size: 40px;" ><span id="pp"></span></div>
+        
+ 
+        <!--Footer-->
+        <div class="modal-footer justify-content-center">
+         
+          <a type="button" id="btnstyle" class="btn btn-outline-success waves-effect" data-dismiss="modal">Ok</a>
+        </div>
+      </div>
+      <!--/.Content-->
+    </div>
+  </div>
+  <!-- Central Modal Medium Success-->
 
 
 
@@ -124,9 +164,23 @@
 
 
 
-
 var a;
+
 $('#start').click(function() {
+  $("#p").html("0")
+  $("#numflow").html("0")
+  $('#btnuplazod').attr('data-target','#centralModalSuccess');
+  $('#centralModalWarning').attr('id','centralModalSuccess');
+  $('#alretId').attr('class','modal-dialog modal-notify modal-success')
+  $('#btnstyle').attr('class','btn btn-outline-success waves-effect')
+  $('.text-center').remove();
+ 
+  $('<div class="text-center"><i class="fas fa-check fa-4x mb-3 animated rotateIn"></i><p>No anomalies encountered, you are good to go! </p></div>').appendTo('.modal-body');
+  $.ajax({
+    type: "GET",
+    url: '{% url "deletecsv"%}',
+    success: function(json){}});
+    
 var aa = setInterval(function(){
 
 $.ajax({
@@ -137,7 +191,21 @@ $.ajax({
       $('#numflow').html(json["t"])
         $("#p").html(json["contextQ"].length);
         document.getElementById("detection").style.visibility = "visible";
-        
+        if($('#p').text() > "0"){
+          $('#btnuplazod').attr('data-target','#centralModalWarning');
+          
+          $('#centralModalSuccess').attr('id','centralModalWarning');
+          $('#alretId').attr('class','modal-dialog modal-notify modal-warning')
+          $('#btnstyle').attr('class','btn btn-outline-warning waves-effect')
+          $('.text-center').remove();
+          $('<div class="text-center" style="width: 40%;margin: 0 auto;"><lottie-player  src="https://assets7.lottiefiles.com/packages/lf20_j3UXNf.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player><div>the system detecte </div></div>').appendTo('.modal-body');
+          $('#pp').text($('#p').text())
+         
+
+          document.getElementById('showcsvfile').style.visibility = 'visible'
+
+          
+        }
         if((json["contextQ"].length % 10 == 0)&&(json["contextQ"].length!=0)) {
           var audio = new Audio('../static/alarm.mp3');
           audio.play();
@@ -190,6 +258,14 @@ if($("#items").empty()){
   document.getElementById("start").style.visibility= "hidden"
   document.getElementById("str").src = "https://assets4.lottiefiles.com/packages/lf20_FtD13Z.json"
   alert("detection started")
+  $.ajax({
+  type: "GET",
+  url: '{% url "showcsvfile"%}',
+  success:function(data)
+ {
+  
+  
+}});
   
 $('#btnuplazod').click(function() {
   $.ajax({
@@ -219,7 +295,8 @@ $('#buttonstart').click(function(){
     }})
 
 })
-   
+  
+
  </script>
 
 {%endblock content%}

@@ -8,7 +8,7 @@
               <h3>Anomalies Detction</h3>
             <div class="inner">
               <ul class="sortable">
-                <li class="ui-state-default"><a href="{% url 'detection' %}">Offline</a></li> 
+                <li class="ui-state-default"><a href="{% url 'detection' %}">OFFLINE</a></li> 
                  <li class="ui-state-default"><a href="{% url 'realtime' %}">Real Time </a></li>  
                  
                
@@ -46,7 +46,7 @@
  <div class="ml-5">
 <div class="row align-items-center mt-5 ml-5 mr-5">
  
-  <a id ="button" >
+  <a id ="button" class="startcic" >
     <div class="col-6" >
       Start CICFlowMetre
     </div></a>
@@ -93,6 +93,8 @@
     </div>
 
 
+
+
 <script>
 
    function addHeaders(table, keys) {
@@ -104,7 +106,8 @@
 }
 var table = document.createElement('table');
 
-if("{{title}}" == "CICflowmetrstarted") {
+$('.startcic').click(function(){
+
 var aa = setInterval(function(){
 
    var a = document.getElementById('mytable')
@@ -145,7 +148,7 @@ document.getElementById('items').appendChild(table);
 
 document.getElementById("showcsvfile").style.visibility = "visible"
 
-}
+});
 
 $('.stopcic').click(function(){
 
