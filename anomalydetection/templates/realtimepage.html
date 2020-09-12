@@ -6,7 +6,7 @@
 <ul>
   <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
   <div class="sortable-accordion"><li>
-    <h3>Anomalies Detction</h3>
+    <h3>Anomaly Detection</h3>
   <div class="inner">
     <ul class="sortable">
       <li class="ui-state-default"><a href="{% url 'detection' %}">Offline</a></li> 
@@ -23,27 +23,26 @@
         
       </div>
     <div class="main_content">
-        <div class="header">
-          <div class="row">
-            <div class="col">
+        <div class="header mr-5">
+          <div class="row mr-5">
+            <div class="col col-lg-4">
               Overview
             </div>
-
+            <div class="col col-lg-2">              
+                   
+            </div>
             <div class="col col-lg-2 " id="detection" style="visibility: hidden;">
               
-              <lottie-player  src=" https://assets3.lottiefiles.com/packages/lf20_S6ngTz/alert.json"  background="transparent"  speed="1" style="width: 70px; height: 50px;" loop autoplay> </lottie-player>
+              
                <div><span id="p" style="margin: 30px;"></span></div>
             </div>
-            <div class="col">
-              {% if messages %}
-             
-                <p>{{message|safe}}</p>
             
-              
-            {%endif%}
-             </div>
-            <div class="col col-lg-2">              
-              <i class="fa fa-question-circle" aria-hidden="true"></i>       
+            <div class="col ">              
+                   
+            </div>
+             
+            <div class="col ">              
+                   
             </div>
             
           </div>
@@ -93,14 +92,15 @@
 
   <thead id="mytable" style="background-color: #302673;" >              
   <tr>
-  <th style="width: 20px" >#</th>
-  <th style="width: 40px">Flow Id</th>
-  <th style="width: 40px" >Src IP</th>
-  <th style="width: 40px">Src Port</th>
-  <th style="width: 40px">Dst IP</th>
-  <th style="width: 40px">Dst Port</th>
-  <th style="width: 40px">Protocol</th>
-  <th style="width: 40px">Timestamp</th>
+  <th style="width: 30px" >#</th>
+  <th style="width: 30px">Flow Id</th>
+  <th style="width: 30px" >Src IP</th>
+  <th style="width: 30px">Src Port</th>
+  <th style="width: 30px">Dst IP</th>
+  <th style="width: 30px">Dst Port</th>
+  <th style="width: 10px">Protocol</th>
+  <th style="width: 30px">Timestamp</th>
+  <th style="width: 40px">ClassOfAttack</th>
   </tr>
 </thead>
 
@@ -169,6 +169,7 @@ var a;
 $('#start').click(function() {
   $("#p").html("0")
   $("#numflow").html("0")
+  
   $('#btnuplazod').attr('data-target','#centralModalSuccess');
   $('#centralModalWarning').attr('id','centralModalSuccess');
   $('#alretId').attr('class','modal-dialog modal-notify modal-success')
@@ -193,12 +194,13 @@ $.ajax({
         document.getElementById("detection").style.visibility = "visible";
         if($('#p').text() > "0"){
           $('#btnuplazod').attr('data-target','#centralModalWarning');
-          
+          $('lottie-player').remove();
+          $('<lottie-player  src=" https://assets3.lottiefiles.com/packages/lf20_S6ngTz/alert.json"  background="transparent"  speed="1" style="width: 70px; height: 50px;" loop autoplay> </lottie-player>').appendTo('#detection')
           $('#centralModalSuccess').attr('id','centralModalWarning');
           $('#alretId').attr('class','modal-dialog modal-notify modal-warning')
           $('#btnstyle').attr('class','btn btn-outline-warning waves-effect')
           $('.text-center').remove();
-          $('<div class="text-center" style="width: 40%;margin: 0 auto;"><lottie-player  src="https://assets7.lottiefiles.com/packages/lf20_j3UXNf.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player><div>the system detecte </div></div>').appendTo('.modal-body');
+          $('<div class="text-center" style="width: 40%;margin: 0 auto;"><lottie-player  src="https://assets7.lottiefiles.com/packages/lf20_j3UXNf.json"  background="transparent"  speed="1"  style="width: 150px; height: 150px;"  loop autoplay> </lottie-player><div>The number of encountered anomalies is: </div></div>').appendTo('.modal-body');
           $('#pp').text($('#p').text())
          
 

@@ -6,7 +6,7 @@
         <ul>
             <li><a href="{% url 'monitoring' %}">Monitoring</a></li>
             <div class="sortable-accordion"><li>
-              <h3>Anomalies Detction</h3>
+              <h3>Anomaly Detectionn</h3>
             <div class="inner">
               <ul class="sortable">
                 <li class="ui-state-default"><a href="{% url 'detection' %}">Offline</a></li> 
@@ -88,7 +88,7 @@
         
     </form> 
   </div>  </div>
-  <P class="mt-2 ml-5">CSV FILES already UPLOADED</P>
+  <P class="mt-2 ml-5">Available csv files.</P>
   <form action="{% url 'satrtanomleisdetection' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
   <div class="row  align-items-center">
@@ -111,14 +111,15 @@
                             <div class="col-8">
                             
                               {% csrf_token %}
-                            <input type="checkbox" name="checkfile" value="{{i}}" id="{{i}}">
+                            <input type="checkbox" name="checkfile" value="{{i}}" id="{{i}}"/>
                             <label for="{{i}}" >{{i}}</label>
                          
                          
                           </div>
+                          <div class="col-lg-2">
                           <form action="{% url 'deletefile' %}" method="POST" enctype="multipart/form-data">
                             {% csrf_token %}  
-                              <div class="col-lg-2">
+                             
                                 
                                 <button type="submit"  name="delete" value="{{i}}" class="btn btn-link px-3"
                                
@@ -126,10 +127,10 @@
                                   
                                 
                              
-                              </div>
+                              
                             
                            </form>
-
+                          </div>
                           </div>
                           
                           
@@ -226,13 +227,13 @@
 <script>
 if ("{{title}}" == "satrtanomleisdetection"){
   if("{{context.query|length}}" == "0"){
-    $('<div class="modal-dialog modal-notify modal-success"><i  class=" ml-5 fas fa-check fa-4x mb-3 animated rotateIn"></i><p style="text-align:center">No anomalies encountered, you are good to go! </p></div>').appendTo('#col');
+    $('<div class=" modal-dialog modal-notify modal-success"><i  class=" ml-5 fas fa-check fa-4x mb-2 animated rotateIn"></i><p >No anomalies encountered,</p><p>&nbsp;&nbsp;&nbsp; you are good to go! </p></div>').appendTo('#col');
   }
   else {
 
 
 $('<lottie-player  class ="ml-5"src="https://assets7.lottiefiles.com/packages/lf20_j3UXNf.json"  background="transparent"  speed="1"  style="width: 100px; height: 100px;"  loop autoplay> </lottie-player>').appendTo('#col');
-$('<span>{{context.query|length}} Anomalies encountered </span>').appendTo('#col')
+$('<span class="mr-5">The number of encountered </span> <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;anomalies is:  &nbsp;{{context.query|length}} </p>').appendTo('#col')
 
 }
 }

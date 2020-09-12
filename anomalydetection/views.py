@@ -40,13 +40,13 @@ def detection(request):
     else :
       
         return render(request,'detectionpage.html',{"context" :context})
-dic= {'s':0,'e':5}
+dic= {'s':0,'e':1}
 @login_required
 def realtime(request):
     delete = Revo.objects.all()
     delete.delete()
     dic['s'] = 0
-    dic['e'] = 5
+    dic['e'] = 1
     return render(request,"realtimepage.html",{"title":"Real Time Detection"} )
 
 @login_required
@@ -57,12 +57,8 @@ def startcicflowmter(request):
     #subprocess.call(["E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat"], shell=True)
     #Popen("E:\\PFE\\cicflowmeter\\bin\\CICFlowMeter.bat",creationflags=subprocess.CREATE_NEW_CONSOLE)
     dic['s'] = 0
-    dic['e'] = 5
+    dic['e'] = 1
     subprocess.Popen('explorer "E:\\PFE\\cicflowmeter\\bin"')
-    t = pd.to_datetime('today').strftime('%Y-%m-%d')
-    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
-       
-        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
         
     return JsonResponse({'T':'CICflowMetre STRATED'})
 
@@ -74,8 +70,6 @@ def showcsvfile(request):
 
 def stopcicflowmter(request):
     subprocess.call(["taskkill","/F","/IM","java.exe"]) 
-    delete = Revo.objects.all()
-    delete.delete()
     return JsonResponse({'t':'t'}) 
 
 def showdata(request):
@@ -141,7 +135,7 @@ def deletefile(request):
 
 def deletecsv(request):
     dic['s'] = 0
-    dic['e'] = 5
+    dic['e'] = 1
     t = pd.to_datetime('today').strftime('%Y-%m-%d')
     if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
         os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
@@ -159,7 +153,7 @@ def satrtanomleisdetection(request):
                 a = request.POST.getlist('checkfile')
                 print(a)
                 print("dddddddd")
-                if ((len(a) != 0) ):
+                if ((len(a) != 0) or(nameoffile['name'] !=[]) ):
                     if(nameoffile['name']!=[]):
                         a.append("media\\"+ nameoffile['name'])
                         nameoffile['name'] = []
@@ -167,7 +161,7 @@ def satrtanomleisdetection(request):
 
                     print(a)
                     print("ssssssssssssss")
-
+                    
                     
                     flows = pd.read_csv(a[0])
                     for i in a[1:] :
@@ -279,12 +273,9 @@ def csvtomodle(filecsv) :
 def detectionsrealtime(request):
     delete = Revo.objects.all()
     delete.delete()
-    t = pd.to_datetime('today').strftime('%Y-%m-%d')
-    if os.path.exists("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv"):
-        context['filechecked'] = glob("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
-        os.remove("E:\\PFE\\cicflowmeter\\bin\data\daily\\"+t+"_Flow.csv")
+
     dic['s'] = 0
-    dic['e'] = 5
+    dic['e'] = 1
     return render(request,'realtimepage.html')
 
 
